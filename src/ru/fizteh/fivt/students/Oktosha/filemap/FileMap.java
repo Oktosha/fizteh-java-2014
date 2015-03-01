@@ -2,6 +2,7 @@ package ru.fizteh.fivt.students.Oktosha.filemap;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,9 +18,18 @@ public class FileMap {
     private Map<String, String> data;
     private Path path;
 
-    public FileMap(Path path) {
-        this.data = new HashMap<>();
+    public FileMap(Path path) throws IOException {
         this.path = path;
+        if (path.toFile().exists()) {
+            this.data = readAll(path);
+        } else {
+            Files.createFile(path);
+            this.data = new HashMap<>();
+        }
+    }
+
+    public void save() throws IOException {
+        writeAll(path, data);
     }
 
     public String put(String key, String value) {
@@ -48,10 +58,6 @@ public class FileMap {
     }
     public List<String> list() {
         return new ArrayList<>(data.keySet());
-    }
-
-    public void load() {
-        
     }
 
     private static void writeWord(String word, DataOutputStream outputStream) throws IOException {
