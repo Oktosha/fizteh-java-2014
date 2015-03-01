@@ -20,3 +20,6 @@ jars
 
 .settings
 .checkstyle
+
+# Added by Oktosha (Kolodzey, 394); mac-specific ignore
+.DS_Store
