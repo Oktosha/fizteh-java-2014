@@ -1,4 +1,4 @@
-package ru.fizteh.fivt.students.Oktosha;
+package ru.fizteh.fivt.students.Oktosha.filemap;
 
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
@@ -50,7 +50,7 @@ public class FileMap {
         outputStream.write(byteWord);
     }
 
-    private void writeAll(Path path) throws IOException {
+    public void writeAll(Path path) throws IOException {
         try (DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(path.toFile()))) {
             for (Map.Entry<String, String> entry : data.entrySet()) {
                 writeWord(entry.getKey(), outputStream);
