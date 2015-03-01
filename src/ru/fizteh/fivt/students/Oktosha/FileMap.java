@@ -1,5 +1,9 @@
 package ru.fizteh.fivt.students.Oktosha;
 
+import java.io.DataOutputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,4 +43,19 @@ public class FileMap {
     }
 
     private Map<String, String> data;
+
+    private void writeWord(String word, DataOutputStream outputStream) throws IOException {
+        byte[] byteWord = word.getBytes("utf-8");
+        outputStream.writeInt(byteWord.length);
+        outputStream.write(byteWord);
+    }
+
+    private void writeAll(Path path) throws IOException {
+        try (DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(path.toFile()))) {
+            for (Map.Entry<String, String> entry : data.entrySet()) {
+                writeWord(entry.getKey(), outputStream);
+                writeWord(entry.getValue(), outputStream);
+            }
+        }
+    }
 }
