@@ -10,7 +10,8 @@ import java.nio.file.Paths;
 public class FileMapMain {
     public static void main(String[] args) throws IOException{
         FileMap filemap = new FileMap(Paths.get("tmp.txt"));
-        filemap.put("key", "value");
-        filemap.put("ключ", "значение");
+        System.out.println(filemap.put("key", "value"));
+        System.out.println(filemap.put("ключ", "значение"));
+        filemap.save();
     }
 }
