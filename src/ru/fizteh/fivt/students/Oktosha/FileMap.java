@@ -1,6 +1,8 @@
 package ru.fizteh.fivt.students.Oktosha;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,7 +11,7 @@ import java.util.Map;
  */
 public class FileMap {
     public FileMap() {
-        data = new HashMap<String, String>();
+        data = new HashMap<>();
     }
     public String put(String key, String value) {
         if (key == null) {
@@ -29,5 +31,12 @@ public class FileMap {
         }
         return data.remove(key);
     }
+    public int size() {
+        return data.size();
+    }
+    public List<String> list() {
+        return new ArrayList<>(data.keySet());
+    }
+
     private Map<String, String> data;
 }
