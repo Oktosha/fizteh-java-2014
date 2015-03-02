@@ -21,15 +21,21 @@ public class FileMap {
     public FileMap(Path path) throws IOException {
         this.path = path;
         if (path.toFile().exists()) {
-            this.data = readAll(path);
+            if (path.toFile().isFile()) {
+                this.data = readAll(path);
+            } else {
+                throw new IOException("bd file is not a file: " + path.toString());
+            }
         } else {
-            Files.createFile(path);
             this.data = new HashMap<>();
         }
     }
 
     public void save() throws IOException {
-        writeAll(path, data);
+        if (size() == 0)
+            Files.deleteIfExists(path);
+        else
+            writeAll(path, data);
     }
 
     public String put(String key, String value) {
@@ -104,7 +110,7 @@ public class FileMap {
            for (String key = readWord(inputStream); key != null; key = readWord(inputStream)) {
                String value = readWord(inputStream);
                if (value == null) {
-                   throw new IOException("bd file is broken");
+                   throw new IOException("bd file is broken: " + path.toString());
                }
                dataFromFile.put(key, value);
            }
