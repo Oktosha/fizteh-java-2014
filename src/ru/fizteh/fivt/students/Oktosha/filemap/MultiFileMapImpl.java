@@ -113,8 +113,8 @@ public class MultiFileMapImpl implements MultiFileMap {
 class FileMapPosition {
     static final int DIR_PER_TABLE = 16;
     static final int FILES_PER_DIR = 16;
-    private int directoryId;
-    private int fileId;
+    private final int directoryId;
+    private final int fileId;
 
     FileMapPosition(int directoryId, int fileId) {
         this.directoryId = directoryId;
@@ -122,7 +122,11 @@ class FileMapPosition {
     }
 
     FileMapPosition(String key) {
-        this(key.hashCode() % DIR_PER_TABLE, key.hashCode() / DIR_PER_TABLE % FILES_PER_DIR);
+        if (key == null) {
+            throw new IllegalArgumentException("null key");
+        }
+        this.directoryId = key.hashCode() % DIR_PER_TABLE;
+        this.fileId = key.hashCode() / DIR_PER_TABLE % FILES_PER_DIR;
     }
 
     public int getDirectoryId() {
