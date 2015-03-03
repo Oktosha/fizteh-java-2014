@@ -47,7 +47,7 @@ public class MultiFileMap {
                 try {
                     Files.deleteIfExists(directoryPath);
                 } catch (DirectoryNotEmptyException ignored) {
-                    /* swallow om-nom-nom */
+                    /* if bd dir contains user files, we don't delete it */
                 }
             }
         }
