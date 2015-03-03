@@ -60,4 +60,25 @@ public class MultiFileMapTest {
     public void testGetNull() throws Exception {
         multiFileMap.get(null);
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testRemoveNull() throws Exception {
+        multiFileMap.remove(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPutNullNull() throws Exception {
+        multiFileMap.put(null, null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPutNullKeyNormalValue() throws Exception {
+        multiFileMap.put(null, "value");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testPutNormalKeyNullValue() throws Exception {
+        multiFileMap.put("key", null);
+    }
+
 }
