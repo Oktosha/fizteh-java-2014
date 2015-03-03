@@ -43,7 +43,7 @@ public class FileMap {
     }
 
     public String put(String key, String value) {
-        if (key == null) {
+        if (key == null || value == null) {
             throw new IllegalArgumentException();
         }
         return data.put(key, value);
