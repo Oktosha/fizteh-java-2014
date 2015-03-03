@@ -88,30 +88,30 @@ public class MultiFileMapImpl implements MultiFileMap {
 
     @Override
     public int size() {
-        int ans = 0;
+        int ret = 0;
         for (int directoryId = 0; directoryId < FileMapPosition.DIR_PER_TABLE; ++directoryId) {
-            ans += directorySize(directoryId);
+            ret += directorySize(directoryId);
         }
-        return ans;
+        return ret;
     }
 
     private int directorySize(int directoryId) {
-        int ans = 0;
+        int ret = 0;
         for (int fileId = 0; fileId < FileMapPosition.FILES_PER_DIR; ++fileId) {
-            ans += fileMaps[directoryId][fileId].size();
+            ret += fileMaps[directoryId][fileId].size();
         }
-        return ans;
+        return ret;
     }
 
     @Override
     public List<String> list() {
-        List<String> ans = new ArrayList<String>();
+        List<String> ret = new ArrayList<>();
         for (int directoryId = 0; directoryId < FileMapPosition.DIR_PER_TABLE; ++directoryId) {
             for (int fileId = 0; fileId < FileMapPosition.FILES_PER_DIR; ++fileId) {
-                ans.addAll(fileMaps[directoryId][fileId].list());
+                ret.addAll(fileMaps[directoryId][fileId].list());
             }
         }
-        return ans;
+        return ret;
     }
 }
 
