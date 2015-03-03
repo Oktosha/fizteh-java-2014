@@ -38,6 +38,10 @@ public class FileMap {
             writeAll(path, data);
     }
 
+    public void clear() {
+        data.clear();
+    }
+
     public String put(String key, String value) {
         if (key == null) {
             throw new IllegalArgumentException();
@@ -62,6 +66,7 @@ public class FileMap {
     public int size() {
         return data.size();
     }
+
     public List<String> list() {
         return new ArrayList<>(data.keySet());
     }
