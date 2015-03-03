@@ -7,6 +7,9 @@ import java.util.List;
  * Created by DKolodzey on 03.03.15.
  */
 public interface MultiFileMap {
+
+    String getName();
+
     void save() throws IOException;
 
     void clear();

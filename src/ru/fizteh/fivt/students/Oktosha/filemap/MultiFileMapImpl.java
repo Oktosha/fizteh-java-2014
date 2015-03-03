@@ -33,6 +33,11 @@ public class MultiFileMapImpl implements MultiFileMap {
     }
 
     @Override
+    public String getName() {
+        return path.getFileName().toString();
+    }
+
+    @Override
     public void save() throws IOException {
         for (int directoryId = 0; directoryId < FileMapPosition.DIR_PER_TABLE; ++directoryId) {
             Path directoryPath = path.resolve(FileMapPosition.relPathToDirectory(directoryId));

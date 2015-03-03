@@ -25,6 +25,11 @@ public class MultiFileMapTest {
     }
 
     @Test
+    public void testGetName() throws Exception {
+        assertTrue("unexpected name" + multiFileMap.getName(), multiFileMap.getName().startsWith("Oktosha.fileMap"));
+    }
+
+    @Test
     public void testSave() throws Exception {
         multiFileMap.save();
         MultiFileMap loadedMultiFileMap = new MultiFileMapImpl(path);
