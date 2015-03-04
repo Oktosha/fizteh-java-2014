@@ -10,6 +10,11 @@ public class TableWithDiffImpl implements TableWithDiff {
     private MultiFileMap multiFileMap;
     private Map<String, String> diff;
 
+    public TableWithDiffImpl(MultiFileMap multiFileMap) {
+        this.multiFileMap = multiFileMap;
+        this.diff = new HashMap<>();
+    }
+
     @Override
     public int getNumberOfUncommittedChanges() {
         return diff.size();
