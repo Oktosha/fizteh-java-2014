@@ -156,7 +156,8 @@ class FileMapPosition {
     }
 
     public boolean isHoldingKey(String key) {
-        return (directoryId == key.hashCode() % DIR_PER_TABLE)
+        return (key != null)
+                && (directoryId == key.hashCode() % DIR_PER_TABLE)
                 && (fileId == key.hashCode() / DIR_PER_TABLE % FILES_PER_DIR);
     }
 }

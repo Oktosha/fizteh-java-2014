@@ -13,6 +13,9 @@ import java.util.function.Predicate;
 /**
  * Created by DKolodzey on 01.03.15.
  * class which implements functionality from file map (without user interaction)
+ *
+ * FileMap doesn't hold null in keys or values,
+ * also you can add additional checks passing predicates to constructor
  */
 public class FileMap {
 
@@ -21,13 +24,21 @@ public class FileMap {
     private Predicate<String> badKeyPredicate;
     private Predicate<String> badValuePredicate;
 
+    public FileMap(Path path) throws IOException {
+        this(path, (s)->s == null, (s)->s == null);
+    }
+
     public FileMap(Path path,
                    Predicate<String> badKeyPredicate,
                    Predicate<String> badValuePredicate) throws IOException {
 
         this.path = path;
-        this.badKeyPredicate = badKeyPredicate;
-        this.badValuePredicate = badValuePredicate;
+        this.badKeyPredicate = (badKeyPredicate == null)
+                ? (s) -> s == null
+                : (s) -> s == null || badKeyPredicate.test(s);
+        this.badValuePredicate = (badValuePredicate == null)
+                ? (s) -> s == null
+                : (s) -> s == null || badValuePredicate.test(s);
 
         if (path.toFile().exists()) {
             if (path.toFile().isFile()) {
