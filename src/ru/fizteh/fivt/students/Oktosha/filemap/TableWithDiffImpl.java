@@ -53,7 +53,16 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public int size() {
-        return multiFileMap.list().size();
+        int ret = multiFileMap.size();
+        for (Map.Entry<String, String> entry : diff.entrySet()) {
+            if (entry.getValue() == null && multiFileMap.get(entry.getKey()) != null) {
+                --ret;
+            }
+            if (entry.getValue() != null && multiFileMap.get(entry.getKey()) == null) {
+                ++ret;
+            }
+        }
+        return ret;
     }
 
     @Override
