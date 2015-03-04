@@ -7,4 +7,6 @@ import ru.fizteh.fivt.storage.strings.Table;
  */
 public interface TableWithDiff extends Table {
     int getNumberOfUncommittedChanges();
+
+    void drop();
 }

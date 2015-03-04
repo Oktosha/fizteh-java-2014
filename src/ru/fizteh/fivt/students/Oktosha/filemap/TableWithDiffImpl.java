@@ -9,24 +9,32 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     private MultiFileMap multiFileMap;
     private Map<String, String> diff;
+    private boolean tableIsDropped;
 
     public TableWithDiffImpl(MultiFileMap multiFileMap) {
         this.multiFileMap = multiFileMap;
         this.diff = new HashMap<>();
+        this.tableIsDropped = false;
     }
 
     @Override
     public int getNumberOfUncommittedChanges() {
+        if (tableIsDropped)
+            throw new IllegalStateException();
         return diff.size();
     }
 
     @Override
     public String getName() {
+        if (tableIsDropped)
+            throw new IllegalStateException();
         return multiFileMap.getName();
     }
 
     @Override
     public String get(String key) {
+        if (tableIsDropped)
+            throw new IllegalStateException();
         if (key == null) {
             throw new IllegalArgumentException();
         }
@@ -39,6 +47,8 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public String put(String key, String value) {
+        if (tableIsDropped)
+            throw new IllegalStateException();
         if (key == null || value == null) {
             throw new IllegalArgumentException();
         }
@@ -48,6 +58,8 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public String remove(String key) {
+        if (tableIsDropped)
+            throw new IllegalStateException();
         if (key == null) {
             throw new IllegalArgumentException();
         }
@@ -58,6 +70,8 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public int size() {
+        if (tableIsDropped)
+            throw new IllegalStateException();
         int ret = multiFileMap.size();
         for (Map.Entry<String, String> entry : diff.entrySet()) {
             if (entry.getValue() == null && multiFileMap.get(entry.getKey()) != null) {
@@ -72,6 +86,8 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public int commit() {
+        if (tableIsDropped)
+            throw new IllegalStateException();
         int ret = getNumberOfUncommittedChanges();
         for (Map.Entry<String, String> entry : diff.entrySet()) {
             if (entry.getValue() == null) {
@@ -86,6 +102,8 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public int rollback() {
+        if (tableIsDropped)
+            throw new IllegalStateException();
         int ret = getNumberOfUncommittedChanges();
         diff.clear();
         return ret;
@@ -93,6 +111,8 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public List<String> list() {
+        if (tableIsDropped)
+            throw new IllegalStateException();
         Set<String> keySet = new HashSet<>(multiFileMap.list());
         for (Map.Entry<String, String> entry : diff.entrySet()) {
             if (entry.getValue() == null) {
@@ -102,5 +122,14 @@ public class TableWithDiffImpl implements TableWithDiff {
             }
         }
         return new ArrayList<>(keySet);
+    }
+
+    @Override
+    public void drop() {
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        multiFileMap.clear();
+        diff.clear();
+        tableIsDropped = true;
     }
 }
