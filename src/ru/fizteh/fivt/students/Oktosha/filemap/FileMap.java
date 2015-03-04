@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Created by DKolodzey on 01.03.15.
@@ -17,12 +18,20 @@ public class FileMap {
 
     private Map<String, String> data;
     private Path path;
+    private Predicate<String> badKeyPredicate;
+    private Predicate<String> badValuePredicate;
 
-    public FileMap(Path path) throws IOException {
+    public FileMap(Path path,
+                   Predicate<String> badKeyPredicate,
+                   Predicate<String> badValuePredicate) throws IOException {
+
         this.path = path;
+        this.badKeyPredicate = badKeyPredicate;
+        this.badValuePredicate = badValuePredicate;
+
         if (path.toFile().exists()) {
             if (path.toFile().isFile()) {
-                this.data = readAll(path);
+                this.data = readAll();
             } else {
                 throw new IOException("bd file is not a file: " + path.toString());
             }
@@ -32,10 +41,11 @@ public class FileMap {
     }
 
     public void save() throws IOException {
-        if (size() == 0)
+        if (size() == 0) {
             Files.deleteIfExists(path);
-        else
-            writeAll(path, data);
+        } else {
+            writeAll();
+        }
     }
 
     public void clear() {
@@ -43,21 +53,21 @@ public class FileMap {
     }
 
     public String put(String key, String value) {
-        if (key == null || value == null) {
+        if (badKeyPredicate.test(key) || badValuePredicate.test(value)) {
             throw new IllegalArgumentException();
         }
         return data.put(key, value);
     }
 
     public String get(String key) {
-        if (key == null) {
+        if (badKeyPredicate.test(key)) {
             throw new IllegalArgumentException();
         }
         return data.get(key);
     }
 
     public String remove(String key) {
-        if (key == null) {
+        if (badKeyPredicate.test(key)) {
             throw new IllegalArgumentException();
         }
         return data.remove(key);
@@ -77,9 +87,9 @@ public class FileMap {
         outputStream.write(byteWord);
     }
 
-    private static void writeAll(Path path, Map<String, String> dataToFile) throws IOException {
+    private void writeAll() throws IOException {
         try (DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(path.toFile()))) {
-            for (Map.Entry<String, String> entry : dataToFile.entrySet()) {
+            for (Map.Entry<String, String> entry : data.entrySet()) {
                 writeWord(entry.getKey(), outputStream);
                 writeWord(entry.getValue(), outputStream);
             }
@@ -109,12 +119,12 @@ public class FileMap {
         }
     }
 
-    private static Map<String, String> readAll(Path path) throws IOException {
+    private Map<String, String> readAll() throws IOException {
         Map<String, String> dataFromFile = new HashMap<>();
         try (DataInputStream inputStream = new DataInputStream(new FileInputStream(path.toFile()))) {
            for (String key = readWord(inputStream); key != null; key = readWord(inputStream)) {
                String value = readWord(inputStream);
-               if (value == null) {
+               if (badKeyPredicate.test(key) || badValuePredicate.test(value)) {
                    throw new IOException("bd file is broken: " + path.toString());
                }
                dataFromFile.put(key, value);
