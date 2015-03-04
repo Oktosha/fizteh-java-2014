@@ -122,12 +122,12 @@ class FileMapPosition {
     private final int directoryId;
     private final int fileId;
 
-    FileMapPosition(int directoryId, int fileId) {
+    public FileMapPosition(int directoryId, int fileId) {
         this.directoryId = directoryId;
         this.fileId = fileId;
     }
 
-    FileMapPosition(String key) {
+    public FileMapPosition(String key) {
         if (key == null) {
             throw new IllegalArgumentException("null key");
         }
@@ -143,7 +143,7 @@ class FileMapPosition {
         return fileId;
     }
 
-    Path relPathToFileMap() {
+    public Path relPathToFileMap() {
         return relPathToFileMap(directoryId, fileId);
     }
 
