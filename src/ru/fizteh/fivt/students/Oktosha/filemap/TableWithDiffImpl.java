@@ -9,7 +9,6 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     private MultiFileMap multiFileMap;
     private Map<String, String> diff;
-    private int sizeDifference;
 
     @Override
     public int getNumberOfUncommittedChanges() {
@@ -38,21 +37,8 @@ public class TableWithDiffImpl implements TableWithDiff {
         if (key == null || value == null) {
             throw new IllegalArgumentException();
         }
-        sizeDifference += countPutSizeDifference(key);
-        if (multiFileMap.get(key) == value) {
-            diff.remove(key);
-        } else {
-            diff.put(key, value);
-        }
+        diff.put(key, value);
         return null;
-    }
-
-    private int countPutSizeDifference(String key) {
-        if (diff.containsKey(key)) {
-            return diff.get(key) == null ? 1 : 0;
-        } else {
-            return multiFileMap.get(key) == null ? 1 : 0;
-        }
     }
 
     @Override
@@ -61,22 +47,13 @@ public class TableWithDiffImpl implements TableWithDiff {
             throw new IllegalArgumentException();
         }
         String ret = get(key);
-        sizeDifference += countRemoveSizeDifference(key);
         diff.put(key, null);
         return ret;
     }
 
-    private int countRemoveSizeDifference(String key) {
-        if (diff.containsKey(key)) {
-            return diff.get(key) == null ? 0 : -1;
-        } else {
-            return multiFileMap.get(key) == null ? 0 : -1;
-        }
-    }
-
     @Override
     public int size() {
-        return multiFileMap.size() + sizeDifference;
+        return multiFileMap.list().size();
     }
 
     @Override
@@ -90,7 +67,6 @@ public class TableWithDiffImpl implements TableWithDiff {
             }
         }
         diff.clear();
-        sizeDifference = 0;
         return ret;
     }
 
@@ -98,7 +74,6 @@ public class TableWithDiffImpl implements TableWithDiff {
     public int rollback() {
         int ret = getNumberOfUncommittedChanges();
         diff.clear();
-        sizeDifference = 0;
         return ret;
     }
 
