@@ -7,7 +7,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * Created by DKolodzey on 02.03.15.
@@ -29,7 +28,7 @@ public class MultiFileMapImpl implements MultiFileMap {
             for (int fileId = 0; fileId < FileMapPosition.FILES_PER_DIR; ++fileId) {
                 FileMapPosition pos = new FileMapPosition(directoryId, fileId);
                 Path fileMapPath = path.resolve(pos.relPathToFileMap());
-                fileMaps[directoryId][fileId] = new FileMap(fileMapPath, pos.keyIsBadPredicate(), (s)->s == null);
+                fileMaps[directoryId][fileId] = new FileMap(fileMapPath, (s)->!pos.isHoldingKey(s), (s)->s == null);
             }
         }
     }
@@ -148,10 +147,6 @@ class FileMapPosition {
         return relPathToFileMap(directoryId, fileId);
     }
 
-    Path relPathToDirectory() {
-        return relPathToDirectory(directoryId);
-    }
-
     static Path relPathToDirectory(int directoryId) {
         return Paths.get(String.format("%d.dir", directoryId));
     }
@@ -160,7 +155,8 @@ class FileMapPosition {
         return Paths.get(String.format("%d.dir/%d.dat", directoryId, fileId));
     }
 
-    Predicate<String> keyIsBadPredicate() {
-        return (s) -> !(new FileMapPosition(s)).equals(this);
+    public boolean isHoldingKey(String key) {
+        return (directoryId == key.hashCode() % DIR_PER_TABLE)
+                && (fileId == key.hashCode() / DIR_PER_TABLE % FILES_PER_DIR);
     }
 }
