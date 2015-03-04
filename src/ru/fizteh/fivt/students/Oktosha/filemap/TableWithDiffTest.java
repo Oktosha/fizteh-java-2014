@@ -5,6 +5,8 @@ import org.junit.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import static org.junit.Assert.*;
 
@@ -91,7 +93,6 @@ public class TableWithDiffTest {
     public void testGetName() throws Exception {
         assertTrue("unexpected name" + tableWithDiff.getName(), tableWithDiff.getName().startsWith("Oktosha.fileMap"));
     }
-
 
     @Test
     public void testGet() throws Exception {
@@ -316,22 +317,125 @@ public class TableWithDiffTest {
 
     @Test
     public void testCommit() throws Exception {
+        tableWithDiff.put("A", "a1");
+        tableWithDiff.put("B", "b1");
+        tableWithDiff.put("Ц", "ц1");
+        tableWithDiff.put("D", "d1");
 
+        assertEquals(4, tableWithDiff.commit());
+
+        tableWithDiff.remove("A");
+        tableWithDiff.put("B", "b1");
+        tableWithDiff.put("D", "d2");
+        tableWithDiff.put("E", "e1");
+
+        tableWithDiff.remove("A");
+        tableWithDiff.put("B", "b1");
+        tableWithDiff.put("D", "d2");
+        tableWithDiff.put("E", "e1");
+
+        tableWithDiff.put("A", "a2");
+        tableWithDiff.remove("B");
+        tableWithDiff.remove("D");
+        tableWithDiff.remove("E");
+
+        assertEquals(4, tableWithDiff.commit());
     }
 
     @Test
     public void testRollback() throws Exception {
+        tableWithDiff.put("A", "a1");
+        tableWithDiff.put("B", "b1");
+        tableWithDiff.put("Ц", "ц1");
+        tableWithDiff.put("D", "d1");
 
+        assertEquals(4, tableWithDiff.rollback());
     }
 
     @Test
     public void testList() throws Exception {
+        assertTrue(tableWithDiff.list().isEmpty());
 
+        tableWithDiff.put("A", "a1");
+        assertEquals(new HashSet<String>(Arrays.asList("A")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.put("B", "b1");
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.put("Ц", "ц1");
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "Ц")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.put("D", "d1");
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "Ц", "D")),
+                new HashSet<>(tableWithDiff.list()));
+
+        tableWithDiff.commit();
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "Ц", "D")),
+                new HashSet<>(tableWithDiff.list()));
+
+        tableWithDiff.remove("A");
+        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.put("B", "b1");
+        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D")),
+                new HashSet<>(tableWithDiff.list()));;
+        tableWithDiff.put("D", "d2");
+        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.put("E", "e1");
+        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+                new HashSet<>(tableWithDiff.list()));
+
+        tableWithDiff.remove("A");
+        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.put("B", "b1");
+        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.put("D", "d2");
+        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.put("E", "e1");
+        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+                new HashSet<>(tableWithDiff.list()));
+
+        tableWithDiff.put("A", "a2");
+        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "Ц", "D", "E")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.remove("B");
+        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц", "D", "E")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.remove("D");
+        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц", "E")),
+                new HashSet<>(tableWithDiff.list()));
+        tableWithDiff.remove("E");
+        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц")),
+                new HashSet<>(tableWithDiff.list()));
+
+        tableWithDiff.commit();
+        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц")),
+                new HashSet<>(tableWithDiff.list()));
+
+
+        tableWithDiff.remove("A");
+        tableWithDiff.put("B", "b1");
+        tableWithDiff.put("Ц", "ц2");
+        tableWithDiff.remove("D");
+        tableWithDiff.put("F", "f1");
+
+        tableWithDiff.rollback();
+        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц")),
+                new HashSet<>(tableWithDiff.list()));
+
+        tableWithDiff.put("F", "f1");
+
+        tableWithDiff = new TableWithDiffImpl(new MultiFileMapImpl(path));
+        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц")),
+                new HashSet<>(tableWithDiff.list()));
+
+        tableWithDiff.drop();
+
+        tableWithDiff = new TableWithDiffImpl(new MultiFileMapImpl(path));
+        assertTrue(tableWithDiff.list().isEmpty());
     }
-
-    @Test
-    public void testDrop() throws Exception {
-
-    }
-
 }
