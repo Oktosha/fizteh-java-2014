@@ -1,5 +1,6 @@
 package ru.fizteh.fivt.students.Oktosha.filemap;
 
+import java.io.IOError;
 import java.io.IOException;
 import java.util.*;
 
@@ -58,8 +59,9 @@ public class TableWithDiffImpl implements TableWithDiff {
         if (key == null || value == null) {
             throw new IllegalArgumentException();
         }
+        String ret = get(key);
         diff.put(key, value);
-        return null;
+        return ret;
     }
 
     @Override
@@ -93,7 +95,7 @@ public class TableWithDiffImpl implements TableWithDiff {
     }
 
     @Override
-    public int commit() {
+    public int commit()  {
         if (tableIsDropped) {
             throw new IllegalStateException();
         }
@@ -104,6 +106,11 @@ public class TableWithDiffImpl implements TableWithDiff {
             } else {
                 multiFileMap.put(entry.getKey(), entry.getValue());
             }
+        }
+        try {
+            multiFileMap.save();
+        } catch (IOException e) {
+            throw new IOError(e);
         }
         diff.clear();
         return ret;
