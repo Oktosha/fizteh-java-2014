@@ -1,9 +1,11 @@
 package ru.fizteh.fivt.students.Oktosha.filemap;
 
+import java.io.IOException;
 import java.util.*;
 
 /**
  * Created by DKolodzey on 04.03.15.
+ * Implementation if TableWithDiff (advanced Table)
  */
 public class TableWithDiffImpl implements TableWithDiff {
 
@@ -19,22 +21,25 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public int getNumberOfUncommittedChanges() {
-        if (tableIsDropped)
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         return diff.size();
     }
 
     @Override
     public String getName() {
-        if (tableIsDropped)
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         return multiFileMap.getName();
     }
 
     @Override
     public String get(String key) {
-        if (tableIsDropped)
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         if (key == null) {
             throw new IllegalArgumentException();
         }
@@ -47,8 +52,9 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public String put(String key, String value) {
-        if (tableIsDropped)
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         if (key == null || value == null) {
             throw new IllegalArgumentException();
         }
@@ -58,8 +64,9 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public String remove(String key) {
-        if (tableIsDropped)
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         if (key == null) {
             throw new IllegalArgumentException();
         }
@@ -70,8 +77,9 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public int size() {
-        if (tableIsDropped)
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         int ret = multiFileMap.size();
         for (Map.Entry<String, String> entry : diff.entrySet()) {
             if (entry.getValue() == null && multiFileMap.get(entry.getKey()) != null) {
@@ -86,8 +94,9 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public int commit() {
-        if (tableIsDropped)
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         int ret = getNumberOfUncommittedChanges();
         for (Map.Entry<String, String> entry : diff.entrySet()) {
             if (entry.getValue() == null) {
@@ -102,8 +111,9 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public int rollback() {
-        if (tableIsDropped)
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         int ret = getNumberOfUncommittedChanges();
         diff.clear();
         return ret;
@@ -111,8 +121,9 @@ public class TableWithDiffImpl implements TableWithDiff {
 
     @Override
     public List<String> list() {
-        if (tableIsDropped)
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         Set<String> keySet = new HashSet<>(multiFileMap.list());
         for (Map.Entry<String, String> entry : diff.entrySet()) {
             if (entry.getValue() == null) {
@@ -125,10 +136,12 @@ public class TableWithDiffImpl implements TableWithDiff {
     }
 
     @Override
-    public void drop() {
-        if (tableIsDropped)
+    public void drop() throws IOException {
+        if (tableIsDropped) {
             throw new IllegalStateException();
+        }
         multiFileMap.clear();
+        multiFileMap.save();
         diff.clear();
         tableIsDropped = true;
     }
