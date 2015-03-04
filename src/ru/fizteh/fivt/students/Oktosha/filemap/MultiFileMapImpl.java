@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Created by DKolodzey on 02.03.15.
@@ -26,8 +27,9 @@ public class MultiFileMapImpl implements MultiFileMap {
                 throw new IOException("bd dir is not a dir: " + directoryPath.toString());
             }
             for (int fileId = 0; fileId < FileMapPosition.FILES_PER_DIR; ++fileId) {
-                Path fileMapPath = path.resolve(FileMapPosition.relPathToFileMap(directoryId, fileId));
-                fileMaps[directoryId][fileId] = new FileMap(fileMapPath);
+                FileMapPosition pos = new FileMapPosition(directoryId, fileId);
+                Path fileMapPath = path.resolve(pos.relPathToFileMap());
+                fileMaps[directoryId][fileId] = new FileMap(fileMapPath, pos.keyIsBadPredicate(), (s)->s == null);
             }
         }
     }
@@ -156,5 +158,9 @@ class FileMapPosition {
 
     static Path relPathToFileMap(int directoryId, int fileId) {
         return Paths.get(String.format("%d.dir/%d.dat", directoryId, fileId));
+    }
+
+    Predicate<String> keyIsBadPredicate() {
+        return (s) -> !(new FileMapPosition(s)).equals(this);
     }
 }
