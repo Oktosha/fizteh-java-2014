@@ -21,7 +21,7 @@ public class TableWithDiffImpl implements TableWithDiff {
         this.multiFileMap = multiFileMap;
         this.diff.set(new HashMap<>());
         this.tableIsDropped = false;
-        this.rwl = new ReentrantReadWriteLock();
+        this.rwl = new ReentrantReadWriteLock(true);
     }
 
     @Override
