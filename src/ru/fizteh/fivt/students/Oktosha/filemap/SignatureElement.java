@@ -19,4 +19,12 @@ public enum SignatureElement {
         this.javaClass = javaClass;
         this.name = name;
     }
+
+    public Class<?> getJavaClass() {
+        return javaClass;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
