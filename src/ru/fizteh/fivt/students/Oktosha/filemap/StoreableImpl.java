@@ -11,17 +11,17 @@ import java.util.List;
  */
 public class StoreableImpl implements Storeable {
 
-    final SignatureElement[] signature;
+    final List<SignatureElement> signature;
     final Object[] columns;
 
     public StoreableImpl(List<SignatureElement> signature) {
-        this.signature = (SignatureElement[]) signature.toArray();
+        this.signature = signature;
         this.columns = new Object[signature.size()];
     }
 
     @Override
     public void setColumnAt(int columnIndex, Object value) throws ColumnFormatException, IndexOutOfBoundsException {
-        if (!signature[columnIndex].getJavaClass().isInstance(value)) {
+        if (!signature.get(columnIndex).getJavaClass().isInstance(value)) {
             throw new ColumnFormatException();
         }
         columns[columnIndex] = value;
@@ -75,10 +75,10 @@ public class StoreableImpl implements Storeable {
     }
 
     private void checkTypeAt(Class<?> type, int columnIndex) throws ColumnFormatException, IndexOutOfBoundsException {
-        if (!signature[columnIndex].getJavaClass().equals(type)) {
-            throw new ColumnFormatException("expected " + type.toString() +
-                                            "at " + columnIndex +
-                                            "got " + signature[columnIndex].getJavaClass());
+        if (!signature.get(columnIndex).getJavaClass().equals(type)) {
+            throw new ColumnFormatException("expected " + type.toString()
+                                            + "at " + columnIndex
+                                            + "got " + signature.get(columnIndex).getJavaClass());
         }
     }
 }
