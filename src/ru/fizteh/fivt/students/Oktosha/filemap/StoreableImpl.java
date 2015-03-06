@@ -21,10 +21,11 @@ public class StoreableImpl implements Storeable {
 
     @Override
     public void setColumnAt(int columnIndex, Object value) throws ColumnFormatException, IndexOutOfBoundsException {
-        if (!signature.get(columnIndex).getJavaClass().isInstance(value)) {
+        if ((value == null) || (signature.get(columnIndex).getJavaClass().isInstance(value))) {
+            columns[columnIndex] = value;
+        } else {
             throw new ColumnFormatException();
         }
-        columns[columnIndex] = value;
     }
 
     @Override
