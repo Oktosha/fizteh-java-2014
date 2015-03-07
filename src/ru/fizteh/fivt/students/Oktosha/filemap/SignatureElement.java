@@ -27,4 +27,13 @@ public enum SignatureElement {
     public String getName() {
         return name;
     }
+
+    public static SignatureElement getSignatureElementByName(String name) throws EnumConstantNotPresentException {
+        for (SignatureElement signatureElement : SignatureElement.values()) {
+            if (signatureElement.getName().equals(name)) {
+                return signatureElement;
+            }
+        }
+        throw new EnumConstantNotPresentException(SignatureElement.class, name);
+    }
 }
