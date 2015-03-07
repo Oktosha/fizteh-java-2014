@@ -37,13 +37,11 @@ public class StructuredTableImpl implements Table {
         if (!signaturePath.toFile().exists()) {
             throw new IOException("bd does not contain signature");
         }
-        List<SignatureElement> signature;
+        List<SignatureElement> signature = new ArrayList<>();
         try (FileInputStream inputStream = new FileInputStream(signaturePath.toFile())) {
             Scanner scanner = new Scanner(inputStream);
-            JSONArray jsonSignatureArray = new JSONArray(scanner.nextLine());
-            signature = new ArrayList<SignatureElement>();
-            for (int i = 0; i < jsonSignatureArray.length(); ++i) {
-                signature.add(SignatureElement.getSignatureElementByName((String) jsonSignatureArray.get(i)));
+            while (scanner.hasNext()) {
+                signature.add(SignatureElement.getSignatureElementByName(scanner.next()));
             }
         } catch (EnumConstantNotPresentException e) {
             throw new IOException("signature is broken" + signaturePath.toString(), e);
@@ -67,12 +65,10 @@ public class StructuredTableImpl implements Table {
             throw new IOException("bd already contains signature; can't write");
         }
         try (FileOutputStream outputStream = new FileOutputStream(signaturePath.toFile())) {
-            JSONArray jsonSignatureArray = new JSONArray();
-            for (int i = 0; i < signature.size(); ++i) {
-                jsonSignatureArray.put(signature.get(i).getName());
-            }
             PrintWriter writer = new PrintWriter(outputStream);
-            writer.print(jsonSignatureArray.toString());
+            for (int i = 0; i < signature.size(); ++i) {
+                writer.print(signature.get(i).getName());
+            }
         }
     }
 
