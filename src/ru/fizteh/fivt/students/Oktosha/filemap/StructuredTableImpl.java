@@ -1,7 +1,5 @@
 package ru.fizteh.fivt.students.Oktosha.filemap;
 
-import jdk.nashorn.internal.parser.JSONParser;
-import org.json.JSONArray;
 import ru.fizteh.fivt.storage.structured.ColumnFormatException;
 import ru.fizteh.fivt.storage.structured.Storeable;
 import ru.fizteh.fivt.storage.structured.Table;
@@ -37,19 +35,24 @@ public class StructuredTableImpl implements Table {
         if (!signaturePath.toFile().exists()) {
             throw new IOException("bd does not contain signature");
         }
-        List<SignatureElement> signature = new ArrayList<>();
         try (FileInputStream inputStream = new FileInputStream(signaturePath.toFile())) {
-            Scanner scanner = new Scanner(inputStream);
+            return readSignature(new Scanner(inputStream));
+        }
+    }
+
+    public static List<SignatureElement> readSignature(Scanner scanner) throws IOException {
+        List<SignatureElement> signature = new ArrayList<>();
+        try {
             while (scanner.hasNext()) {
                 signature.add(SignatureElement.getSignatureElementByName(scanner.next()));
             }
         } catch (EnumConstantNotPresentException e) {
-            throw new IOException("signature is broken" + signaturePath.toString(), e);
+            throw new IOException("signature is broken", e);
         }
         return signature;
     }
 
-    public StructuredTableImpl(Path path, List<SignatureElement> signature) throws IOException{
+    public StructuredTableImpl(Path path, List<SignatureElement> signature) throws IOException {
         if (path.toFile().exists()) {
             throw new IOException("failed to create table; folder already exists");
         }
@@ -66,9 +69,13 @@ public class StructuredTableImpl implements Table {
         }
         try (FileOutputStream outputStream = new FileOutputStream(signaturePath.toFile())) {
             PrintWriter writer = new PrintWriter(outputStream);
-            for (int i = 0; i < signature.size(); ++i) {
-                writer.print(signature.get(i).getName());
-            }
+            writeSignature(writer, signature);
+        }
+    }
+
+    public static void writeSignature(PrintWriter writer, List<SignatureElement> signature) throws IOException {
+        for (int i = 0; i < signature.size(); ++i) {
+            writer.print(signature.get(i).getName() + " ");
         }
     }
 
