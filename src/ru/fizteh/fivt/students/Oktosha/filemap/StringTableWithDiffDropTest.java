@@ -6,74 +6,72 @@ import org.junit.Test;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by DKolodzey on 04.03.15.
  * Test that drop switches to invalid state
  */
-public class TableWithDiffDropTest {
+public class StringTableWithDiffDropTest {
 
-    TableWithDiff tableWithDiff;
+    StringTableWithDiff stringTableWithDiff;
     MultiFileMap multiFileMap;
     Path path;
     @Before
     public void setUp() throws Exception {
         path = Files.createTempDirectory("Oktosha.fileMap");
         multiFileMap = new MultiFileMapImpl(path);
-        tableWithDiff = new TableWithDiffImpl(multiFileMap);
-        tableWithDiff.put("key", "value");
-        tableWithDiff.put("ключ", "значение");
-        tableWithDiff.drop();
+        stringTableWithDiff = new StringTableWithDiffImpl(multiFileMap);
+        stringTableWithDiff.put("key", "value");
+        stringTableWithDiff.put("ключ", "значение");
+        stringTableWithDiff.drop();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testCommit() throws Exception{
-        tableWithDiff.commit();
+        stringTableWithDiff.commit();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testDrop() throws Exception {
-        tableWithDiff.drop();
+        stringTableWithDiff.drop();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGet() throws Exception {
-        tableWithDiff.get("key");
+        stringTableWithDiff.get("key");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGetName() throws Exception {
-        tableWithDiff.getName();
+        stringTableWithDiff.getName();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGetNumberOfUncommittedChanges() throws Exception {
-        tableWithDiff.getNumberOfUncommittedChanges();
+        stringTableWithDiff.getNumberOfUncommittedChanges();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testList() throws Exception {
-        tableWithDiff.list();
+        stringTableWithDiff.list();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testPut() throws Exception {
-        tableWithDiff.put("key", "value");
+        stringTableWithDiff.put("key", "value");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testRemove() throws Exception {
-        tableWithDiff.remove("key");
+        stringTableWithDiff.remove("key");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testRollback() throws Exception {
-        tableWithDiff.rollback();
+        stringTableWithDiff.rollback();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testSize() throws Exception {
-        tableWithDiff.size();
+        stringTableWithDiff.size();
     }
 }

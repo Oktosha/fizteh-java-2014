@@ -10,14 +10,14 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Created by DKolodzey on 04.03.15.
  * Implementation if TableWithDiff (advanced Table)
  */
-public class TableWithDiffImpl implements TableWithDiff {
+public class StringTableWithDiffImpl implements StringTableWithDiff {
 
     private MultiFileMap multiFileMap;
     private final ThreadLocal<Map<String, String>> diff = new ThreadLocal<>();
     private boolean tableIsDropped;
     private ReadWriteLock rwl;
 
-    public TableWithDiffImpl(MultiFileMap multiFileMap) {
+    public StringTableWithDiffImpl(MultiFileMap multiFileMap) {
         this.multiFileMap = multiFileMap;
         this.diff.set(new HashMap<>());
         this.tableIsDropped = false;

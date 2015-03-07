@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Created by DKolodzey on 04.03.15.
  */
-public interface TableWithDiff extends Table {
+public interface StringTableWithDiff extends Table {
     int getNumberOfUncommittedChanges();
 
     void drop() throws IOException;
