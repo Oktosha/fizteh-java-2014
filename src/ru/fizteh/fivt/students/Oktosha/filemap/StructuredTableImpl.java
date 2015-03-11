@@ -7,6 +7,7 @@ import ru.fizteh.fivt.storage.structured.Table;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,18 +18,47 @@ import java.util.Scanner;
 public class StructuredTableImpl implements Table {
 
     Path path;
-    List<SignatureElement> signature;
     StringTableWithDiff backEndTable;
+    List<SignatureElement> signature;
+    StoreableSerializerDeserializer serializerDeserializer;
 
-    public StructuredTableImpl(Path path) throws IOException {
+
+    public StructuredTableImpl(Path path, StoreableSerializerDeserializer serializerDeserializer) throws IOException {
         if (!path.toFile().exists()) {
             throw new IOException("bd folder does not exist");
         }
         if (!path.toFile().isDirectory()) {
             throw new IOException("bd folder is not a folder");
         }
-        signature = readSignature(path.resolve("signature.tsv"));
-        backEndTable = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
+
+        this.path = path;
+        this.signature = readSignature(path.resolve("signature.tsv"));
+        this.backEndTable = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
+        this.serializerDeserializer = serializerDeserializer;
+
+        List<String> keys = this.backEndTable.list();
+        try {
+            for (String key : keys) {
+                serializerDeserializer.deserialize(signature, backEndTable.get(key));
+            }
+        } catch (ParseException e){
+            throw new IOException(e);
+        }
+    }
+
+    public StructuredTableImpl(Path path, List<SignatureElement> signature,
+                               StoreableSerializerDeserializer serializerDeserializer) throws IOException {
+        if (path.toFile().exists()) {
+            throw new IOException("failed to create table; folder already exists");
+        }
+
+        Files.createDirectory(path);
+        writeSignature(path.resolve("signature.tsv"), signature);
+
+        this.path = path;
+        this.signature = signature;
+        this.backEndTable = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
+        this.serializerDeserializer = serializerDeserializer;
     }
 
     public static List<SignatureElement> readSignature(Path signaturePath) throws IOException {
@@ -50,17 +80,6 @@ public class StructuredTableImpl implements Table {
             throw new IOException("signature is broken", e);
         }
         return signature;
-    }
-
-    public StructuredTableImpl(Path path, List<SignatureElement> signature) throws IOException {
-        if (path.toFile().exists()) {
-            throw new IOException("failed to create table; folder already exists");
-        }
-        Files.createDirectory(path);
-        this.path = path;
-        this.signature = signature;
-        this.backEndTable = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
-        writeSignature(path.resolve("signature.tsv"), signature);
     }
 
     public static void writeSignature(Path signaturePath, List<SignatureElement> signature) throws IOException {
