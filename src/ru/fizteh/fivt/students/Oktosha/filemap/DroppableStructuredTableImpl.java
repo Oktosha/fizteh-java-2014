@@ -2,7 +2,6 @@ package ru.fizteh.fivt.students.Oktosha.filemap;
 
 import ru.fizteh.fivt.storage.structured.ColumnFormatException;
 import ru.fizteh.fivt.storage.structured.Storeable;
-import ru.fizteh.fivt.storage.structured.Table;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -20,10 +19,11 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
     Path path;
     StringTableWithDiff backEndTable;
     List<SignatureElement> signature;
-    StoreableSerializerDeserializer serializerDeserializer;
+    StoreableSerializerDeserializer codec;
+    private boolean tableIsDropped;
 
 
-    public DroppableStructuredTableImpl(Path path, StoreableSerializerDeserializer serializerDeserializer) throws IOException {
+    public DroppableStructuredTableImpl(Path path, StoreableSerializerDeserializer codec) throws IOException {
         if (!path.toFile().exists()) {
             throw new IOException("bd folder does not exist");
         }
@@ -34,12 +34,13 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         this.path = path;
         this.signature = readSignature(path.resolve("signature.tsv"));
         this.backEndTable = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
-        this.serializerDeserializer = serializerDeserializer;
+        this.codec = codec;
+        this.tableIsDropped = false;
 
         List<String> keys = this.backEndTable.list();
         try {
             for (String key : keys) {
-                serializerDeserializer.deserialize(signature, backEndTable.get(key));
+                codec.deserialize(signature, backEndTable.get(key));
             }
         } catch (ParseException e){
             throw new IOException(e);
@@ -47,7 +48,7 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
     }
 
     public DroppableStructuredTableImpl(Path path, List<SignatureElement> signature,
-                                        StoreableSerializerDeserializer serializerDeserializer) throws IOException {
+                                        StoreableSerializerDeserializer codec) throws IOException {
         if (path.toFile().exists()) {
             throw new IOException("failed to create table; folder already exists");
         }
@@ -58,7 +59,8 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         this.path = path;
         this.signature = signature;
         this.backEndTable = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
-        this.serializerDeserializer = serializerDeserializer;
+        this.codec = codec;
+        this.tableIsDropped = false;
     }
 
     public static List<SignatureElement> readSignature(Path signaturePath) throws IOException {
@@ -100,59 +102,107 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
 
     @Override
     public Storeable put(String key, Storeable value) throws ColumnFormatException {
-        return null;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        try {
+            String encodedValue = backEndTable.put(key, codec.serialize(signature, value));
+            if (encodedValue == null)
+                return null; //no value on this key before
+            return codec.deserialize(signature, encodedValue);
+        } catch (ParseException e) {
+            throw new IllegalStateException("failed to deserialize held value");
+        }
     }
 
     @Override
     public Storeable remove(String key) {
-        return null;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        try {
+            String encodedValue = backEndTable.remove(key);
+            if (encodedValue == null)
+                return null; //no value on this key before
+            return codec.deserialize(signature, encodedValue);
+        } catch (ParseException e) {
+            throw new IllegalStateException("failed to deserialize held value");
+        }
     }
 
     @Override
     public int size() {
-        return 0;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        return backEndTable.size();
     }
 
     @Override
     public List<String> list() {
-        return null;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        return backEndTable.list();
     }
 
     @Override
     public int commit() throws IOException {
-        return 0;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        return backEndTable.commit();
     }
 
     @Override
     public int rollback() {
-        return 0;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        return backEndTable.rollback();
     }
 
     @Override
     public int getNumberOfUncommittedChanges() {
-        return 0;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        return backEndTable.getNumberOfUncommittedChanges();
     }
 
     @Override
     public int getColumnsCount() {
-        return 0;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        return signature.size();
     }
 
     @Override
     public Class<?> getColumnType(int columnIndex) throws IndexOutOfBoundsException {
-        return null;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        return signature.get(columnIndex).getJavaClass();
     }
 
     @Override
     public String getName() {
-        return null;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        return backEndTable.getName();
     }
 
     @Override
     public Storeable get(String key) {
-        return null;
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        try {
+            String encodedValue = backEndTable.get(key);
+            if (encodedValue == null)
+                return null; //no value on this key before
+            return codec.deserialize(signature, encodedValue);
+        } catch (ParseException e) {
+            throw new IllegalStateException("failed to deserialize held value");
+        }
     }
 
     @Override
-    public void drop() throws IOException {};
+    public void drop() throws IOException {
+        if (tableIsDropped)
+            throw new IllegalStateException();
+        backEndTable.drop();
+        tableIsDropped = true;
+    };
 }
