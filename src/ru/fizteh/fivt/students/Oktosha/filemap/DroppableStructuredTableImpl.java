@@ -10,9 +10,13 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Created by DKolodzey on 07.03.15.
+ * DroppableStructuredTableImpl implements extended interface Table from structured
+ * which will be held inside TableProviderImpl
  */
 public class DroppableStructuredTableImpl implements DroppableStructuredTable {
 
@@ -20,7 +24,9 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
     StringTableWithDiff backEndTable;
     List<SignatureElement> signature;
     StoreableSerializerDeserializer codec;
-    private boolean tableIsDropped;
+    private boolean tableIsDropped = false;
+    private ReadWriteLock rwl = new ReentrantReadWriteLock(true);
+
 
 
     public DroppableStructuredTableImpl(Path path, StoreableSerializerDeserializer codec) throws IOException {
@@ -35,14 +41,14 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         this.signature = readSignature(path.resolve("signature.tsv"));
         this.backEndTable = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
         this.codec = codec;
-        this.tableIsDropped = false;
+
 
         List<String> keys = this.backEndTable.list();
         try {
             for (String key : keys) {
                 codec.deserialize(signature, backEndTable.get(key));
             }
-        } catch (ParseException e){
+        } catch (ParseException e) {
             throw new IOException(e);
         }
     }
@@ -60,7 +66,6 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         this.signature = signature;
         this.backEndTable = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
         this.codec = codec;
-        this.tableIsDropped = false;
     }
 
     public static List<SignatureElement> readSignature(Path signaturePath) throws IOException {
@@ -95,114 +100,189 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
     }
 
     public static void writeSignature(PrintWriter writer, List<SignatureElement> signature) throws IOException {
-        for (int i = 0; i < signature.size(); ++i) {
-            writer.print(signature.get(i).getName() + " ");
+        for (SignatureElement signatureElement : signature) {
+            writer.print(signatureElement.getName() + " ");
         }
     }
 
     @Override
     public Storeable put(String key, Storeable value) throws ColumnFormatException {
-        if (tableIsDropped)
-            throw new IllegalStateException();
+        rwl.readLock().lock();
         try {
-            String encodedValue = backEndTable.put(key, codec.serialize(signature, value));
-            if (encodedValue == null)
-                return null; //no value on this key before
-            return codec.deserialize(signature, encodedValue);
-        } catch (ParseException e) {
-            throw new IllegalStateException("failed to deserialize held value");
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            try {
+                String encodedValue = backEndTable.put(key, codec.serialize(signature, value));
+                if (encodedValue == null) {
+                    return null; //no value on this key before
+                }
+                return codec.deserialize(signature, encodedValue);
+            } catch (ParseException e) {
+                throw new IllegalStateException("failed to deserialize held value");
+            }
+        } finally {
+            rwl.readLock().unlock();
         }
     }
 
     @Override
     public Storeable remove(String key) {
-        if (tableIsDropped)
-            throw new IllegalStateException();
+        rwl.readLock().lock();
         try {
-            String encodedValue = backEndTable.remove(key);
-            if (encodedValue == null)
-                return null; //no value on this key before
-            return codec.deserialize(signature, encodedValue);
-        } catch (ParseException e) {
-            throw new IllegalStateException("failed to deserialize held value");
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            try {
+                String encodedValue = backEndTable.remove(key);
+                if (encodedValue == null) {
+                    return null; //no value on this key before
+                }
+                return codec.deserialize(signature, encodedValue);
+            } catch (ParseException e) {
+                throw new IllegalStateException("failed to deserialize held value");
+            }
+        } finally {
+            rwl.readLock().unlock();
         }
     }
 
     @Override
     public int size() {
-        if (tableIsDropped)
-            throw new IllegalStateException();
-        return backEndTable.size();
+        rwl.readLock().lock();
+        try {
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            return backEndTable.size();
+        } finally {
+            rwl.readLock().unlock();
+        }
     }
 
     @Override
     public List<String> list() {
-        if (tableIsDropped)
-            throw new IllegalStateException();
-        return backEndTable.list();
+        rwl.readLock().lock();
+        try {
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            return backEndTable.list();
+        } finally {
+            rwl.readLock().unlock();
+        }
     }
 
     @Override
     public int commit() throws IOException {
-        if (tableIsDropped)
-            throw new IllegalStateException();
-        return backEndTable.commit();
+        rwl.writeLock().lock();
+        try {
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            return backEndTable.commit();
+        } finally {
+            rwl.writeLock().unlock();
+        }
     }
 
     @Override
     public int rollback() {
-        if (tableIsDropped)
-            throw new IllegalStateException();
-        return backEndTable.rollback();
+        rwl.readLock().lock();
+        try {
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            return backEndTable.rollback();
+        } finally {
+            rwl.readLock().unlock();
+        }
     }
 
     @Override
     public int getNumberOfUncommittedChanges() {
-        if (tableIsDropped)
-            throw new IllegalStateException();
-        return backEndTable.getNumberOfUncommittedChanges();
+        rwl.readLock().lock();
+        try {
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            return backEndTable.getNumberOfUncommittedChanges();
+        } finally {
+            rwl.readLock().unlock();
+        }
     }
 
     @Override
     public int getColumnsCount() {
-        if (tableIsDropped)
-            throw new IllegalStateException();
-        return signature.size();
+        rwl.readLock().lock();
+        try {
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            return signature.size();
+        } finally {
+            rwl.readLock().unlock();
+        }
     }
 
     @Override
     public Class<?> getColumnType(int columnIndex) throws IndexOutOfBoundsException {
-        if (tableIsDropped)
-            throw new IllegalStateException();
-        return signature.get(columnIndex).getJavaClass();
+        rwl.readLock().lock();
+        try {
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            return signature.get(columnIndex).getJavaClass();
+        } finally {
+            rwl.readLock().unlock();
+        }
     }
 
     @Override
     public String getName() {
-        if (tableIsDropped)
-            throw new IllegalStateException();
-        return backEndTable.getName();
+        rwl.readLock().lock();
+        try {
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            return backEndTable.getName();
+        } finally {
+            rwl.readLock().unlock();
+        }
     }
 
     @Override
     public Storeable get(String key) {
-        if (tableIsDropped)
-            throw new IllegalStateException();
+        rwl.readLock().lock();
         try {
-            String encodedValue = backEndTable.get(key);
-            if (encodedValue == null)
-                return null; //no value on this key before
-            return codec.deserialize(signature, encodedValue);
-        } catch (ParseException e) {
-            throw new IllegalStateException("failed to deserialize held value");
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            try {
+                String encodedValue = backEndTable.get(key);
+                if (encodedValue == null) {
+                    return null; //no value on this key before
+                }
+                return codec.deserialize(signature, encodedValue);
+            } catch (ParseException e) {
+                throw new IllegalStateException("failed to deserialize held value");
+            }
+        } finally {
+            rwl.readLock().unlock();
         }
     }
 
     @Override
     public void drop() throws IOException {
-        if (tableIsDropped)
-            throw new IllegalStateException();
-        backEndTable.drop();
-        tableIsDropped = true;
-    };
+        rwl.writeLock().lock();
+        try {
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            backEndTable.drop();
+            tableIsDropped = true;
+        } finally {
+            rwl.writeLock().unlock();
+        }
+    }
 }
