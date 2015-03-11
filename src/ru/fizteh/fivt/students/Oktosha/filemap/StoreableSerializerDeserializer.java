@@ -10,7 +10,7 @@ import java.util.List;
  * Created by DKolodzey on 06.03.15.
  */
 
-public interface StoreableSerializerDeserializer {
+interface StoreableSerializerDeserializer {
     String serialize(List<SignatureElement> signature, Storeable value)
             throws ColumnFormatException, IndexOutOfBoundsException;
     Storeable deserialize(List<SignatureElement> signature, String serializedValue) throws ParseException;

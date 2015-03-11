@@ -15,7 +15,7 @@ import java.util.Scanner;
 /**
  * Created by DKolodzey on 07.03.15.
  */
-public class StructuredTableImpl implements Table {
+public class DroppableStructuredTableImpl implements DroppableStructuredTable {
 
     Path path;
     StringTableWithDiff backEndTable;
@@ -23,7 +23,7 @@ public class StructuredTableImpl implements Table {
     StoreableSerializerDeserializer serializerDeserializer;
 
 
-    public StructuredTableImpl(Path path, StoreableSerializerDeserializer serializerDeserializer) throws IOException {
+    public DroppableStructuredTableImpl(Path path, StoreableSerializerDeserializer serializerDeserializer) throws IOException {
         if (!path.toFile().exists()) {
             throw new IOException("bd folder does not exist");
         }
@@ -46,8 +46,8 @@ public class StructuredTableImpl implements Table {
         }
     }
 
-    public StructuredTableImpl(Path path, List<SignatureElement> signature,
-                               StoreableSerializerDeserializer serializerDeserializer) throws IOException {
+    public DroppableStructuredTableImpl(Path path, List<SignatureElement> signature,
+                                        StoreableSerializerDeserializer serializerDeserializer) throws IOException {
         if (path.toFile().exists()) {
             throw new IOException("failed to create table; folder already exists");
         }
@@ -152,4 +152,7 @@ public class StructuredTableImpl implements Table {
     public Storeable get(String key) {
         return null;
     }
+
+    @Override
+    public void drop() throws IOException {};
 }
