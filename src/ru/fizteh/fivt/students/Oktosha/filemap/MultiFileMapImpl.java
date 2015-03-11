@@ -131,8 +131,8 @@ class FileMapPosition {
         if (key == null) {
             throw new IllegalArgumentException("null key");
         }
-        this.directoryId = key.hashCode() % DIR_PER_TABLE;
-        this.fileId = key.hashCode() / DIR_PER_TABLE % FILES_PER_DIR;
+        this.directoryId = Integer.remainderUnsigned(key.hashCode(), DIR_PER_TABLE);
+        this.fileId = Integer.divideUnsigned(key.hashCode(), DIR_PER_TABLE) % FILES_PER_DIR;
     }
 
     public int getDirectoryId() {
@@ -156,8 +156,7 @@ class FileMapPosition {
     }
 
     public boolean isHoldingKey(String key) {
-        return (key != null)
-                && (directoryId == key.hashCode() % DIR_PER_TABLE)
-                && (fileId == key.hashCode() / DIR_PER_TABLE % FILES_PER_DIR);
+        FileMapPosition other = new FileMapPosition(key);
+        return other.directoryId == this.directoryId && other.fileId == this.fileId;
     }
 }

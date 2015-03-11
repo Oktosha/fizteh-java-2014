@@ -3,6 +3,7 @@ package ru.fizteh.fivt.students.Oktosha.filemap;
 import ru.fizteh.fivt.storage.structured.ColumnFormatException;
 import ru.fizteh.fivt.storage.structured.Storeable;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -81,5 +82,20 @@ public class StoreableImpl implements Storeable {
                                             + "at " + columnIndex
                                             + "got " + signature.get(columnIndex).getJavaClass());
         }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof StoreableImpl) {
+            boolean signaturesAreEqual = this.signature.equals(((StoreableImpl) other).signature);
+            boolean valuesAreEqual = Arrays.equals(this.columns, ((StoreableImpl) other).columns);
+            return signaturesAreEqual && valuesAreEqual;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.signature.hashCode() + this.columns.hashCode();
     }
 }

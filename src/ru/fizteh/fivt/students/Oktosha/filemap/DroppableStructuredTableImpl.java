@@ -28,7 +28,6 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
     private ReadWriteLock rwl = new ReentrantReadWriteLock(true);
 
 
-
     public DroppableStructuredTableImpl(Path path, StoreableSerializerDeserializer codec) throws IOException {
         if (!path.toFile().exists()) {
             throw new IOException("bd folder does not exist");
@@ -53,8 +52,8 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         }
     }
 
-    public DroppableStructuredTableImpl(Path path, List<SignatureElement> signature,
-                                        StoreableSerializerDeserializer codec) throws IOException {
+    public DroppableStructuredTableImpl(Path path, StoreableSerializerDeserializer codec,
+                                        List<SignatureElement> signature) throws IOException {
         if (path.toFile().exists()) {
             throw new IOException("failed to create table; folder already exists");
         }
@@ -286,3 +285,4 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         }
     }
 }
+
