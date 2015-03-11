@@ -92,8 +92,8 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         if (signaturePath.toFile().exists()) {
             throw new IOException("bd already contains signature; can't write");
         }
-        try (FileOutputStream outputStream = new FileOutputStream(signaturePath.toFile())) {
-            PrintWriter writer = new PrintWriter(outputStream);
+        try (FileOutputStream outputStream = new FileOutputStream(signaturePath.toFile());
+             PrintWriter writer = new PrintWriter(outputStream)) {
             writeSignature(writer, signature);
         }
     }
