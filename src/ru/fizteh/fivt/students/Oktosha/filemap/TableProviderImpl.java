@@ -6,6 +6,8 @@ import ru.fizteh.fivt.storage.structured.Table;
 import ru.fizteh.fivt.storage.structured.TableProvider;
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -26,6 +28,18 @@ public class TableProviderImpl implements TableProvider {
     Predicate<String> badTableNamePredicate = (s)->(s == null);
     StoreableSerializerDeserializer codec = new JSONStoreableSerializerDeserializer();
     ReadWriteLock rwl = new ReentrantReadWriteLock(true);
+
+    TableProviderImpl(Path path) throws IOException {
+        this.path = path;
+        if (!this.path.toFile().isDirectory()) {
+            throw new IOException("bd dir is not a dir");
+        }
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, (f)->(f.toFile().isDirectory()))) {
+            for (Path tableDir : stream) {
+                tables.put(tableDir.getFileName().toString(), new DroppableStructuredTableImpl(tableDir, codec));
+            }
+        }
+    }
 
     @Override
     public Table getTable(String name) {
