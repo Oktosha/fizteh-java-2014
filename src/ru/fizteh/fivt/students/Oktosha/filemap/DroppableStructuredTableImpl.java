@@ -279,6 +279,8 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
                 throw new IllegalStateException();
             }
             backEndTable.drop();
+            Files.deleteIfExists(path.resolve("signature.tsv"));
+            Files.deleteIfExists(path);
             tableIsDropped = true;
         } finally {
             rwl.writeLock().unlock();

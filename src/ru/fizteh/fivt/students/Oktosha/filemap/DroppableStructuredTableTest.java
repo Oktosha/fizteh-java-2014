@@ -64,7 +64,7 @@ public class DroppableStructuredTableTest {
     @Test
     public void testRemove() throws Exception {
         assertEquals(values.get(0), table.remove("key"));
-        assertNull(values.get(0));
+        assertNull(table.remove("key"));
     }
 
     @Test
@@ -107,8 +107,8 @@ public class DroppableStructuredTableTest {
         assertEquals(Boolean.class, table.getColumnType(0));
         assertEquals(String.class,  table.getColumnType(1));
         assertEquals(Integer.class, table.getColumnType(2));
-        assertEquals(Double.class,  table.getColumnType(3));
-        assertEquals(String.class,  table.getColumnType(4));
+        assertEquals(Double.class, table.getColumnType(3));
+        assertEquals(String.class, table.getColumnType(4));
     }
 
     @Test
@@ -126,5 +126,5 @@ public class DroppableStructuredTableTest {
     public void testDrop() throws Exception {
         table.drop();
         assertFalse(path.toFile().exists());
-    }
+   }
 }
