@@ -75,7 +75,8 @@ public class TableProviderImpl implements TableProvider {
                 }
             }
 
-            return tables.put(name, new DroppableStructuredTableImpl(path.resolve(name), codec, signature));
+            tables.put(name, new DroppableStructuredTableImpl(path.resolve(name), codec, signature));
+            return tables.get(name);
 
         } finally {
             rwl.writeLock().unlock();
