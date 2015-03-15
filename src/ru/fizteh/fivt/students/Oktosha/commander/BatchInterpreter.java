@@ -34,7 +34,7 @@ public class BatchInterpreter implements Interpreter {
             }
             for (List<String> job : parsedJobs) {
                 commandMap.get(job.get(0)).exec(context, job);
-                if (context.getExitRequested()) {
+                if (context.isExitRequested()) {
                     return;
                 }
             }

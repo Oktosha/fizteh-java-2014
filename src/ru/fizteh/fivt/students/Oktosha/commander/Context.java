@@ -13,7 +13,7 @@ public interface Context {
     TableProvider getTableProvider();
     Table getCurrentTable();
     void setCurrentTable(Table table);
-    boolean getExitRequested();
+    boolean isExitRequested();
     void setExitRequestedToTrue();
     Writer getOutputWriter();
 }

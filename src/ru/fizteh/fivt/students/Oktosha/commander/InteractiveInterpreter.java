@@ -53,7 +53,7 @@ public class InteractiveInterpreter implements Interpreter {
                 for (List<String> job : parsedJobs) {
                     try {
                         commandMap.get(job.get(0)).exec(context, job);
-                        if (context.getExitRequested()) {
+                        if (context.isExitRequested()) {
                             return;
                         }
                     } catch (CommandExecutionException e) {
