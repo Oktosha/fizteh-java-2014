@@ -1,5 +1,6 @@
 package ru.fizteh.fivt.students.Oktosha.filemap;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import ru.fizteh.fivt.storage.structured.ColumnFormatException;
 import ru.fizteh.fivt.storage.structured.Storeable;
@@ -54,21 +55,27 @@ public class JSONStoreableSerializerDeserializer implements StoreableSerializerD
     }
     public Storeable deserialize(List<SignatureElement> signature, String serializedValue) throws ParseException {
         Storeable deserializedValue = new StoreableImpl(signature);
-        JSONArray jsonArray = new JSONArray(serializedValue);
-        if (jsonArray.length() != signature.size()) {
-            throw new ParseException(serializedValue, -1);
-        }
+        JSONArray jsonArray;
         try {
-            for (int i = 0; i < signature.size(); ++i) {
-                Object jsonArrayItem = jsonArray.get(i);
+            jsonArray = new JSONArray(serializedValue);
+        } catch (JSONException e) {
+            throw new ParseException(e.getMessage(), -1);
+        }
+        if (jsonArray.length() != signature.size()) {
+            throw new ParseException("expected " + signature.size() + " columns; got " + jsonArray.length(), -1);
+        }
+        for (int i = 0; i < signature.size(); ++i) {
+            Object jsonArrayItem = jsonArray.get(i);
+            try {
                 if (jsonArrayItem.equals(JSONObject.NULL)) {
                     deserializedValue.setColumnAt(i, null);
                 } else {
                     deserializedValue.setColumnAt(i, signature.get(i).getJavaClass().cast(jsonArrayItem));
                 }
+            } catch (ColumnFormatException | ClassCastException | IndexOutOfBoundsException e) {
+                throw new ParseException("unable to set value \"" + jsonArrayItem.toString() + "\" at column #" + i
+                                         + "; expected column type: " + signature.get(i).getName(), i);
             }
-        } catch (ColumnFormatException | ClassCastException | IndexOutOfBoundsException e) {
-            throw new ParseException(serializedValue, -1);
         }
         return deserializedValue;
     }
