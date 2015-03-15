@@ -65,7 +65,12 @@ public class JSONStoreableSerializerDeserializer implements StoreableSerializerD
             throw new ParseException("expected " + signature.size() + " columns; got " + jsonArray.length(), -1);
         }
         for (int i = 0; i < signature.size(); ++i) {
-            Object jsonArrayItem = jsonArray.get(i);
+            Object jsonArrayItem;
+            try {
+                jsonArrayItem = jsonArray.get(i);
+            } catch (JSONException e) {
+                throw new IllegalStateException("JSON fail in deserializer", e);
+            }
             try {
                 if (jsonArrayItem.equals(JSONObject.NULL)) {
                     deserializedValue.setColumnAt(i, null);
