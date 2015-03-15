@@ -2,7 +2,7 @@ package ru.fizteh.fivt.students.Oktosha.parallel_main;
 
 import ru.fizteh.fivt.storage.structured.TableProvider;
 import ru.fizteh.fivt.students.Oktosha.commander.*;
-import ru.fizteh.fivt.students.Oktosha.filemap.TableProviderFactoryImpl;
+import ru.fizteh.fivt.students.Oktosha.database.TableProviderFactoryImpl;
 import ru.fizteh.fivt.students.Oktosha.parallel_main.commands.*;
 
 import java.io.*;

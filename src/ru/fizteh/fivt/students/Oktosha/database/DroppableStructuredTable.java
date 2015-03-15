@@ -1,4 +1,4 @@
-package ru.fizteh.fivt.students.Oktosha.filemap;
+package ru.fizteh.fivt.students.Oktosha.database;
 
 import ru.fizteh.fivt.storage.structured.Table;
 

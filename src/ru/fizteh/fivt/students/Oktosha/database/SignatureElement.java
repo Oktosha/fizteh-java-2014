@@ -1,4 +1,4 @@
-package ru.fizteh.fivt.students.Oktosha.filemap;
+package ru.fizteh.fivt.students.Oktosha.database;
 
 /**
  * Created by DKolodzey on 06.03.15.

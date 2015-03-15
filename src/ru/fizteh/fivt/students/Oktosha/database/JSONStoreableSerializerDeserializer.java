@@ -1,4 +1,4 @@
-package ru.fizteh.fivt.students.Oktosha.filemap;
+package ru.fizteh.fivt.students.Oktosha.database;
 
 import org.json.JSONException;
 import org.json.JSONObject;
