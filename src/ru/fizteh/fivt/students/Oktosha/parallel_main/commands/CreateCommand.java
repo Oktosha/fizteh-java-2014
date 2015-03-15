@@ -23,6 +23,7 @@ public class CreateCommand extends AbstractCommand implements Command {
     @Override
     public void exec(Context context, List<String> arguments) throws CommandExecutionException {
         checkArgumentsAtLeast(arguments, 3);
+
         List<Class<?>> signature = new ArrayList<>();
         for (int i = 2; i < arguments.size(); ++i) {
             try {

@@ -1,14 +1,11 @@
 package ru.fizteh.fivt.students.Oktosha.commander;
 
-import ru.fizteh.fivt.students.Oktosha.commander.Command;
-import ru.fizteh.fivt.students.Oktosha.commander.CommandExecutionException;
-import ru.fizteh.fivt.students.Oktosha.commander.Context;
-
 import java.io.IOException;
 import java.util.List;
 
 /**
  * Created by DKolodzey on 16.03.15.
+ * Abstract helper superclass
  */
 public abstract class AbstractCommand implements Command {
     protected void println(Context context, String line) throws CommandExecutionException {
