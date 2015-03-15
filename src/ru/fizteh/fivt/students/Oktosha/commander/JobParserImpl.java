@@ -87,7 +87,7 @@ class JobParsingAutomaton {
     };
 
     private final List<List<String>> parsedJobs = new ArrayList<>();
-    private final List<String> currentJob = new ArrayList<>();
+    private List<String> currentJob = new ArrayList<>();
     private StringBuilder currentWordBuilder = new StringBuilder();
     private String errorMessage;
 
@@ -108,7 +108,7 @@ class JobParsingAutomaton {
                     break;
                 }
                 parsedJobs.add(currentJob);
-                currentJob.clear();
+                currentJob = new ArrayList<>();
                 break;
             case PUSH_BOTH:
                 performAction(Action.PUSH_WORD, ch);
@@ -125,10 +125,13 @@ class JobParsingAutomaton {
     public List<List<String>> parse(String line) throws ParseException {
         State currentState = State.EMPTY;
         for (int i = 0; i < line.length(); ++i) {
-            currentState = NEXT_STATE[currentState.getOrd()][Symbol.forChar(line.charAt(i)).getOrd()];
-            performAction(ACTION[currentState.getOrd()][Symbol.forChar(line.charAt(i)).getOrd()], line.charAt(i));
+            char ch = line.charAt(i);
+            performAction(ACTION[currentState.getOrd()][Symbol.forChar(ch).getOrd()], line.charAt(i));
+            currentState = NEXT_STATE[currentState.getOrd()][Symbol.forChar(ch).getOrd()];
         }
         performAction(ACTION[currentState.getOrd()][Symbol.EOL.getOrd()], (char) 0);
+        currentState = NEXT_STATE[currentState.getOrd()][Symbol.EOL.getOrd()];
+
         if (currentState.equals(State.ACCEPTED)) {
             return parsedJobs;
         } else if (currentState.equals(State.DECLINED)) {
