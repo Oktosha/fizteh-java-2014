@@ -55,8 +55,9 @@ public class JSONStoreableSerializerDeserializer implements StoreableSerializerD
     public Storeable deserialize(List<SignatureElement> signature, String serializedValue) throws ParseException {
         Storeable deserializedValue = new StoreableImpl(signature);
         JSONArray jsonArray = new JSONArray(serializedValue);
-        if (jsonArray.length() != signature.size())
+        if (jsonArray.length() != signature.size()) {
             throw new ParseException(serializedValue, -1);
+        }
         try {
             for (int i = 0; i < signature.size(); ++i) {
                 Object jsonArrayItem = jsonArray.get(i);
@@ -66,7 +67,7 @@ public class JSONStoreableSerializerDeserializer implements StoreableSerializerD
                     deserializedValue.setColumnAt(i, signature.get(i).getJavaClass().cast(jsonArrayItem));
                 }
             }
-        } catch (ColumnFormatException| ClassCastException| IndexOutOfBoundsException e) {
+        } catch (ColumnFormatException | ClassCastException | IndexOutOfBoundsException e) {
             throw new ParseException(serializedValue, -1);
         }
         return deserializedValue;

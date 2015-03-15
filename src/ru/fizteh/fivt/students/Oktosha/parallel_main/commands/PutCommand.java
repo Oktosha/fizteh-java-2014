@@ -26,7 +26,7 @@ public class PutCommand extends AbstractCommand {
         try {
             value = context.getTableProvider().deserialize(context.getCurrentTable(), serializedValue);
         } catch (ParseException e) {
-            throw new CommandExecutionException(getName() + "error: failed to deserialize value: " + e.getMessage(), e);
+            throw new CommandExecutionException("wrong type (" + e.getMessage() + ")", e);
         }
         Storeable oldValue = context.getCurrentTable().put(arguments.get(1), value);
         println(context,
