@@ -23,6 +23,5 @@ public class ShowCommand extends AbstractCommand {
         for (String tableName : context.getTableProvider().getTableNames()) {
             println(context, tableName + " " + context.getTableProvider().getTable(tableName).size());
         }
-
     }
 }
