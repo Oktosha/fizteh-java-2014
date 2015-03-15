@@ -8,7 +8,5 @@ import java.util.List;
 public interface Command {
     String getName();
 
-    ArgumentParser getParser();
-
     void exec(Context context, List<String> arguments) throws CommandExecutionException;
 }
