@@ -30,6 +30,7 @@ public class PutCommand extends AbstractCommand {
         }
         Storeable oldValue = context.getCurrentTable().put(arguments.get(1), value);
         println(context,
-                oldValue == null ? "new" : context.getTableProvider().serialize(context.getCurrentTable(), oldValue));
+                oldValue == null ? "new"
+                        : "overwrite " + context.getTableProvider().serialize(context.getCurrentTable(), oldValue));
     }
 }

@@ -39,6 +39,6 @@ public class CreateCommand extends AbstractCommand implements Command {
             throw new CommandExecutionException(getName() + " error: " + e.getMessage(), e);
         }
 
-        println(context, (table == null) ? arguments.get(1) + " exists\n" : "created\n");
+        println(context, (table == null) ? arguments.get(1) + " exists" : "created");
     }
 }
