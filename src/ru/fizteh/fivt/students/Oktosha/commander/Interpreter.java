@@ -1,5 +1,6 @@
 package ru.fizteh.fivt.students.Oktosha.commander;
 
+import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.text.ParseException;
@@ -12,5 +13,5 @@ import java.text.ParseException;
 public interface Interpreter {
     void interpret(Iterable<Command> commands, Context context,
                    Reader reader, Writer outputWriter, Writer errorWriter)
-            throws CommandExecutionException, ParseException;
+            throws CommandExecutionException, ParseException, IOException;
 }

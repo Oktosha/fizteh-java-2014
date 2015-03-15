@@ -1,6 +1,6 @@
 package ru.fizteh.fivt.students.Oktosha.commander;
 
-import java.io.PrintWriter;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.text.ParseException;
@@ -18,33 +18,38 @@ public class InteractiveInterpreter implements Interpreter {
 
     @Override
     public void interpret(
-            Iterable<Command> commands, Context context, Reader reader, Writer outputWriter, Writer errorWriter) {
+            Iterable<Command> commands, Context context, Reader reader, Writer outputWriter, Writer errorWriter)
+            throws IOException {
         Map<String, Command> commandMap = new HashMap<>();
 
         for (Command cmd : commands) {
             commandMap.put(cmd.getName(), cmd);
         }
         Scanner scanner = new Scanner(reader);
-        PrintWriter outputPrintWriter = new PrintWriter(outputWriter, true);
-        PrintWriter errorPrintWriter = new PrintWriter(errorWriter, true);
         JobParser jobParser = new JobParserImpl();
 
-        outputPrintWriter.print(prompt);
+        outputWriter.write(prompt);
+        outputWriter.flush();
 
         while (scanner.hasNextLine()) {
-            final boolean[] allCommandsRecognized = {true};
+            boolean allCommandsRecognized = true;
             List<List<String>> parsedJobs;
             try {
                 parsedJobs = jobParser.parse(scanner.nextLine());
             } catch (ParseException e) {
-                errorPrintWriter.println(e.getMessage());
+                errorWriter.write(e.getMessage() + "\n");
+                errorWriter.flush();
                 continue;
             }
-            parsedJobs.stream().filter(job -> !commandMap.containsKey(job.get(0))).forEach(job -> {
-                errorPrintWriter.println("command " + job.get(0) + " doesn't exist");
-                allCommandsRecognized[0] = false;
-            });
-            if (allCommandsRecognized[0]) {
+            for (List<String> job : parsedJobs) {
+                if (!commandMap.containsKey(job.get(0))) {
+                    errorWriter.write("command " + job.get(0) + " doesn't exist\n");
+                    errorWriter.flush();
+                    allCommandsRecognized = false;
+                }
+            }
+
+            if (allCommandsRecognized) {
                 for (List<String> job : parsedJobs) {
                     try {
                         commandMap.get(job.get(0)).exec(context, job);
@@ -52,11 +57,13 @@ public class InteractiveInterpreter implements Interpreter {
                             return;
                         }
                     } catch (CommandExecutionException e) {
-                        errorPrintWriter.println(e.getMessage());
+                        errorWriter.write(e.getMessage() + "\n");
+                        errorWriter.flush();
                     }
                 }
             }
-            outputPrintWriter.print(prompt);
+            outputWriter.write(prompt);
+            outputWriter.flush();
         }
     }
 }
