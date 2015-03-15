@@ -69,12 +69,41 @@ public class JSONStoreableSerializerDeserializer implements StoreableSerializerD
             try {
                 if (jsonArrayItem.equals(JSONObject.NULL)) {
                     deserializedValue.setColumnAt(i, null);
+                } else if (jsonArrayItem instanceof Number) {
+                    Number asNumber = (Number) jsonArrayItem;
+                    switch (signature.get(i)) {
+                        case DOUBLE:
+                            deserializedValue.setColumnAt(i, asNumber.doubleValue());
+                            break;
+                        case FLOAT:
+                            deserializedValue.setColumnAt(i, asNumber.floatValue());
+                            break;
+                        case LONG:
+                            deserializedValue.setColumnAt(i, asNumber.longValue());
+                            break;
+                        case INTEGER:
+                            deserializedValue.setColumnAt(i, asNumber.intValue());
+                            break;
+                        case BYTE:
+                            deserializedValue.setColumnAt(i, asNumber.byteValue());
+                            break;
+                        case STRING:
+                        case BOOLEAN:
+                            throw new ParseException("unable to set value \"" + jsonArrayItem.toString()
+                                + "\" at column #" + i
+                                + "; expected column type: " + signature.get(i).getName()
+                                + ";", i);
+                        default:
+                            throw new IllegalStateException();
+                    }
                 } else {
-                    deserializedValue.setColumnAt(i, signature.get(i).getJavaClass().cast(jsonArrayItem));
+                    deserializedValue.setColumnAt(i, jsonArrayItem);
                 }
             } catch (ColumnFormatException | ClassCastException | IndexOutOfBoundsException e) {
-                throw new ParseException("unable to set value \"" + jsonArrayItem.toString() + "\" at column #" + i
-                                         + "; expected column type: " + signature.get(i).getName(), i);
+                throw new ParseException("unable to set value \"" + jsonArrayItem.toString()
+                                         + "\" at column #" + i
+                                         + "; expected column type: " + signature.get(i).getName()
+                                         + ";" + e.getMessage(), i);
             }
         }
         return deserializedValue;
