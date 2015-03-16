@@ -26,7 +26,7 @@ public class StringTableWithDiffDropTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testCommit() throws Exception{
+    public void testCommit() throws Exception {
         stringTableWithDiff.commit();
     }
 
