@@ -35,7 +35,7 @@ public class MultiFileMapTest {
         MultiFileMap loadedMultiFileMap = new MultiFileMapImpl(path);
         List<String> listOfKeys = multiFileMap.list();
         List<String> loadedListOfKeys = loadedMultiFileMap.list();
-        assertEquals(new HashSet<String>(listOfKeys), new HashSet<String>(loadedListOfKeys));
+        assertEquals(new HashSet<>(listOfKeys), new HashSet<>(loadedListOfKeys));
         for (String key : listOfKeys) {
             assertEquals(multiFileMap.get(key), loadedMultiFileMap.get(key));
         }

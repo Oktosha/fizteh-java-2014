@@ -91,7 +91,9 @@ public class StringTableWithDiffTest {
 
     @Test
     public void testGetName() throws Exception {
-        assertTrue("unexpected name" + stringTableWithDiff.getName(), stringTableWithDiff.getName().startsWith("Oktosha.fileMap"));
+        assertTrue(
+                "unexpected name" + stringTableWithDiff.getName(),
+                stringTableWithDiff.getName().startsWith("Oktosha.fileMap"));
     }
 
     @Test
@@ -357,63 +359,63 @@ public class StringTableWithDiffTest {
         assertTrue(stringTableWithDiff.list().isEmpty());
 
         stringTableWithDiff.put("A", "a1");
-        assertEquals(new HashSet<String>(Arrays.asList("A")),
+        assertEquals(new HashSet<>(Arrays.asList("A")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.put("B", "b1");
-        assertEquals(new HashSet<String>(Arrays.asList("A", "B")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "B")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.put("Ц", "ц1");
-        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "Ц")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "B", "Ц")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.put("D", "d1");
-        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "Ц", "D")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "B", "Ц", "D")),
                 new HashSet<>(stringTableWithDiff.list()));
 
         stringTableWithDiff.commit();
-        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "Ц", "D")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "B", "Ц", "D")),
                 new HashSet<>(stringTableWithDiff.list()));
 
         stringTableWithDiff.remove("A");
-        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D")),
+        assertEquals(new HashSet<>(Arrays.asList("B", "Ц", "D")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.put("B", "b1");
-        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D")),
-                new HashSet<>(stringTableWithDiff.list()));;
+        assertEquals(new HashSet<>(Arrays.asList("B", "Ц", "D")),
+                new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.put("D", "d2");
-        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D")),
+        assertEquals(new HashSet<>(Arrays.asList("B", "Ц", "D")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.put("E", "e1");
-        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+        assertEquals(new HashSet<>(Arrays.asList("B", "Ц", "D", "E")),
                 new HashSet<>(stringTableWithDiff.list()));
 
         stringTableWithDiff.remove("A");
-        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+        assertEquals(new HashSet<>(Arrays.asList("B", "Ц", "D", "E")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.put("B", "b1");
-        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+        assertEquals(new HashSet<>(Arrays.asList("B", "Ц", "D", "E")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.put("D", "d2");
-        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+        assertEquals(new HashSet<>(Arrays.asList("B", "Ц", "D", "E")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.put("E", "e1");
-        assertEquals(new HashSet<String>(Arrays.asList("B", "Ц", "D", "E")),
+        assertEquals(new HashSet<>(Arrays.asList("B", "Ц", "D", "E")),
                 new HashSet<>(stringTableWithDiff.list()));
 
         stringTableWithDiff.put("A", "a2");
-        assertEquals(new HashSet<String>(Arrays.asList("A", "B", "Ц", "D", "E")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "B", "Ц", "D", "E")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.remove("B");
-        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц", "D", "E")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "Ц", "D", "E")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.remove("D");
-        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц", "E")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "Ц", "E")),
                 new HashSet<>(stringTableWithDiff.list()));
         stringTableWithDiff.remove("E");
-        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "Ц")),
                 new HashSet<>(stringTableWithDiff.list()));
 
         stringTableWithDiff.commit();
-        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "Ц")),
                 new HashSet<>(stringTableWithDiff.list()));
 
 
@@ -424,13 +426,13 @@ public class StringTableWithDiffTest {
         stringTableWithDiff.put("F", "f1");
 
         stringTableWithDiff.rollback();
-        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "Ц")),
                 new HashSet<>(stringTableWithDiff.list()));
 
         stringTableWithDiff.put("F", "f1");
 
         stringTableWithDiff = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
-        assertEquals(new HashSet<String>(Arrays.asList("A", "Ц")),
+        assertEquals(new HashSet<>(Arrays.asList("A", "Ц")),
                 new HashSet<>(stringTableWithDiff.list()));
 
         stringTableWithDiff.drop();

@@ -1,6 +1,5 @@
 package ru.fizteh.fivt.students.Oktosha.parallel_main.commands;
 
-import ru.fizteh.fivt.storage.structured.Storeable;
 import ru.fizteh.fivt.students.Oktosha.commander.AbstractCommand;
 import ru.fizteh.fivt.students.Oktosha.commander.CommandExecutionException;
 import ru.fizteh.fivt.students.Oktosha.commander.Context;

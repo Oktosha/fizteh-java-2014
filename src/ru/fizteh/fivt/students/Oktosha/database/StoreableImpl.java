@@ -96,6 +96,6 @@ public class StoreableImpl implements Storeable {
 
     @Override
     public int hashCode() {
-        return this.signature.hashCode() + this.columns.hashCode();
+        return this.signature.hashCode() + Arrays.hashCode(this.columns);
     }
 }

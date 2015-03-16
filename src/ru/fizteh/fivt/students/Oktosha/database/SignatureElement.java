@@ -37,7 +37,8 @@ public enum SignatureElement {
         throw new EnumConstantNotPresentException(SignatureElement.class, name);
     }
 
-    public static SignatureElement getSignatureElementByClass(Class<?> javaClass) throws EnumConstantNotPresentException {
+    public static SignatureElement getSignatureElementByClass(Class<?> javaClass)
+            throws EnumConstantNotPresentException {
         for (SignatureElement signatureElement : SignatureElement.values()) {
             if (signatureElement.getJavaClass().equals(javaClass)) {
                 return signatureElement;
