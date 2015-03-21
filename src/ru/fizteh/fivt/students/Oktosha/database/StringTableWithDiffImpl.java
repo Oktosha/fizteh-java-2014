@@ -1,6 +1,5 @@
 package ru.fizteh.fivt.students.Oktosha.database;
 
-import java.io.IOError;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -142,7 +141,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
     }
 
     @Override
-    public int commit()  {
+    public int commit() throws IOException {
         rwl.writeLock().lock();
         int ret;
         try {
@@ -157,11 +156,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                     multiFileMap.put(entry.getKey(), entry.getValue());
                 }
             }
-            try {
-                multiFileMap.save();
-            } catch (IOException e) {
-                throw new IOError(e);
-            }
+            multiFileMap.save();
             diff.get().clear();
         } finally {
             rwl.writeLock().unlock();
