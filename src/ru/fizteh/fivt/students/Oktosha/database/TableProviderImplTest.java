@@ -1,11 +1,14 @@
 package ru.fizteh.fivt.students.Oktosha.database;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import ru.fizteh.fivt.storage.structured.Storeable;
 import ru.fizteh.fivt.storage.structured.Table;
 import ru.fizteh.fivt.storage.structured.TableProvider;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,6 +17,9 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 public class TableProviderImplTest {
+
+    @Rule
+    public final TemporaryFolder folder = new TemporaryFolder();
 
     Path path;
     TableProvider tableProvider;
@@ -25,7 +31,8 @@ public class TableProviderImplTest {
 
     @Before
     public void setUp() throws Exception {
-        path = Files.createTempDirectory("Oktosha.tableProvider");
+        File rootFolder = folder.newFolder("Oktosha.tableProvider");
+        path = rootFolder.toPath();
 
         columnTypes = new ArrayList<>();
         columnTypes.add(Boolean.class);

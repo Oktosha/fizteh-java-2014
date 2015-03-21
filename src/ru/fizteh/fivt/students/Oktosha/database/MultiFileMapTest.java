@@ -1,8 +1,11 @@
 package ru.fizteh.fivt.students.Oktosha.database;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -13,12 +16,16 @@ import static org.junit.Assert.*;
 
 public class MultiFileMapTest {
 
+    @Rule
+    public final TemporaryFolder folder = new TemporaryFolder();
+
     Path path;
     MultiFileMap multiFileMap;
 
     @Before
     public void setUp() throws Exception {
-        path = Files.createTempDirectory("Oktosha.fileMap");
+        File rootFolder = folder.newFolder("Oktosha.fileMap");
+        path = rootFolder.toPath();
         multiFileMap = new MultiFileMapImpl(path);
         multiFileMap.put("key", "value");
         multiFileMap.put("ключ", "значение");

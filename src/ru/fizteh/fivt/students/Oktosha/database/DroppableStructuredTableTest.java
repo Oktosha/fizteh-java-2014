@@ -1,9 +1,12 @@
 package ru.fizteh.fivt.students.Oktosha.database;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import ru.fizteh.fivt.storage.structured.Storeable;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -14,6 +17,9 @@ import static org.junit.Assert.*;
 
 public class DroppableStructuredTableTest {
 
+    @Rule
+    public final TemporaryFolder folder = new TemporaryFolder();
+
     Path path;
     JSONStoreableSerializerDeserializer codec;
     List<SignatureElement> signature;
@@ -22,7 +28,8 @@ public class DroppableStructuredTableTest {
 
     @Before
     public void setUp() throws Exception {
-        path = Files.createTempDirectory("Oktosha.fileMap");
+        File rootFolder = folder.newFolder();
+        path = rootFolder.toPath();
         path = path.resolve("tableName");
 
         codec = new JSONStoreableSerializerDeserializer();

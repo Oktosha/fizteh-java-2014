@@ -1,8 +1,11 @@
 package ru.fizteh.fivt.students.Oktosha.database;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -12,12 +15,17 @@ import java.nio.file.Path;
  */
 public class StringTableWithDiffDropTest {
 
+    @Rule
+    public final TemporaryFolder folder = new TemporaryFolder();
+
     StringTableWithDiff stringTableWithDiff;
     MultiFileMap multiFileMap;
     Path path;
+
     @Before
     public void setUp() throws Exception {
-        path = Files.createTempDirectory("Oktosha.fileMap");
+        File rootFolder = folder.newFolder("Oktosha.fileMap");
+        path = rootFolder.toPath();
         multiFileMap = new MultiFileMapImpl(path);
         stringTableWithDiff = new StringTableWithDiffImpl(multiFileMap);
         stringTableWithDiff.put("key", "value");
