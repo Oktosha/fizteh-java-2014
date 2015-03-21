@@ -98,7 +98,7 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         }
     }
 
-    public static void writeSignature(PrintWriter writer, List<SignatureElement> signature) throws IOException {
+    public static void writeSignature(PrintWriter writer, List<SignatureElement> signature) {
         for (SignatureElement signatureElement : signature) {
             writer.print(signatureElement.getName() + " ");
         }
