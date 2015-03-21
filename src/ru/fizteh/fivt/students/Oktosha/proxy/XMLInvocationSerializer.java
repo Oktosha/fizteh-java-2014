@@ -3,6 +3,13 @@ package ru.fizteh.fivt.students.Oktosha.proxy;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.util.IdentityHashMap;
@@ -14,10 +21,11 @@ import java.util.IdentityHashMap;
 public class XMLInvocationSerializer implements InvocationSerializer {
     @Override
     public String serialize(Method method, Object[] args, Class<?> implClass, Object returnValue, Throwable thrown) {
+        XMLStreamWriter xmlWriter;
         try {
             StringWriter stringWriter = new StringWriter();
             XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            XMLStreamWriter xmlWriter = outputFactory.createXMLStreamWriter(stringWriter);
+            xmlWriter = outputFactory.createXMLStreamWriter(stringWriter);
 
             xmlWriter.writeStartElement("invoke");
             xmlWriter.writeAttribute("timestamp", String.valueOf(System.currentTimeMillis()));
@@ -41,10 +49,26 @@ public class XMLInvocationSerializer implements InvocationSerializer {
                 xmlWriter.writeEndElement(); /* return */
             }
             xmlWriter.writeEndElement(); /* invoke */
+            xmlWriter.flush();
+            xmlWriter.close();
+            return stringWriter.toString();
         } catch (XMLStreamException e) {
             throw new RuntimeException(e);
         }
-        return null;
+    }
+
+    public String addTabs(String xmlString) throws TransformerException {
+        TransformerFactory factory = TransformerFactory.newInstance();
+
+        Transformer transformer = factory.newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+        StringWriter formattedStringWriter = new StringWriter();
+        transformer.transform(new StreamSource(new StringReader(xmlString.toString())),
+                              new StreamResult(formattedStringWriter));
+        return formattedStringWriter.toString();
     }
 
     void writeObject(Object object, XMLStreamWriter xmlWriter,
@@ -57,10 +81,11 @@ public class XMLInvocationSerializer implements InvocationSerializer {
             xmlWriter.writeCharacters(object.toString());
             return;
         }
-        if (map.put(object, null) != null) {
+        if (map.containsKey(object)) {
             xmlWriter.writeEmptyElement("cyclic");
             return;
         }
+        map.put(object, null);
         Iterable iterableObject = (Iterable) object;
         xmlWriter.writeStartElement("list");
             for (Object innerObject : iterableObject) {
