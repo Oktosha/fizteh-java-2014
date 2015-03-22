@@ -3,7 +3,6 @@ package ru.fizteh.fivt.students.Oktosha.database.tableprovider;
 import ru.fizteh.fivt.storage.structured.ColumnFormatException;
 import ru.fizteh.fivt.storage.structured.Storeable;
 import ru.fizteh.fivt.storage.structured.Table;
-import ru.fizteh.fivt.storage.structured.TableProvider;
 import ru.fizteh.fivt.students.Oktosha.database.storeable.*;
 
 import java.io.IOException;
@@ -23,7 +22,7 @@ import java.util.function.Predicate;
  * Created by DKolodzey on 12.03.15.
  * Thread safe implementation of TableProvider
  */
-public class TableProviderImpl implements TableProvider {
+public class TableProviderImpl implements ExtendedTableProvider {
     Path path;
     Map<String, DroppableStructuredTable> tables = new HashMap<>();
     Predicate<String> badTableNamePredicate = (s)->(s == null);
@@ -45,7 +44,7 @@ public class TableProviderImpl implements TableProvider {
     }
 
     @Override
-    public Table getTable(String name) {
+    public DroppableStructuredTable getTable(String name) {
         rwl.readLock().lock();
         try {
             if (badTableNamePredicate.test(name)) {
@@ -58,7 +57,7 @@ public class TableProviderImpl implements TableProvider {
     }
 
     @Override
-    public Table createTable(String name, List<Class<?>> columnTypes) throws IOException {
+    public DroppableStructuredTable createTable(String name, List<Class<?>> columnTypes) throws IOException {
         rwl.writeLock().lock();
         try {
 

@@ -2,7 +2,7 @@ package ru.fizteh.fivt.students.Oktosha.parallel_main;
 
 import ru.fizteh.fivt.storage.structured.TableProvider;
 import ru.fizteh.fivt.students.Oktosha.commander.*;
-import ru.fizteh.fivt.students.Oktosha.database.tableprovider.TableProviderFactoryImpl;
+import ru.fizteh.fivt.students.Oktosha.database.tableprovider.SimpleTableProviderFactory;
 import ru.fizteh.fivt.students.Oktosha.parallel_main.commands.*;
 
 import java.io.*;
@@ -23,7 +23,7 @@ public class ParallelMain {
 
         TableProvider tableProvider;
         try {
-            tableProvider = new TableProviderFactoryImpl().create(property);
+            tableProvider = new SimpleTableProviderFactory().create(property);
         } catch (IOException e) {
             System.err.println("unable to create database: " + e.getMessage());
             System.exit(2);
