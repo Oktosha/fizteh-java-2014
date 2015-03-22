@@ -182,4 +182,9 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
             backEndRWL.writeLock().unlock();
         }
     }
+
+    @Override
+    public void setDiff(Diff diff) {
+        this.diff.set(diff);
+    }
 }

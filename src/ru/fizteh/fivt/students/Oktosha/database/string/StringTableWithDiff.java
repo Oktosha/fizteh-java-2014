@@ -1,5 +1,7 @@
 package ru.fizteh.fivt.students.Oktosha.database.string;
 
+import ru.fizteh.fivt.students.Oktosha.database.Diff;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -28,4 +30,6 @@ public interface StringTableWithDiff {
     int getNumberOfUncommittedChanges();
 
     void clear() throws IOException;
+
+    void setDiff(Diff diff);
 }
