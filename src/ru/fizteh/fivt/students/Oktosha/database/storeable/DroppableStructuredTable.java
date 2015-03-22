@@ -4,12 +4,15 @@ import ru.fizteh.fivt.storage.structured.Table;
 import ru.fizteh.fivt.students.Oktosha.database.Diff;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by DKolodzey on 11.03.15.
  */
-public interface DroppableStructuredTable extends Table {
+public interface DroppableStructuredTable extends Table, AutoCloseable {
     void drop() throws IOException;
 
     void setDiff(Diff diff);
+
+    boolean isClosed();
 }

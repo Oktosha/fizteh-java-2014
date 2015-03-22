@@ -27,7 +27,9 @@ public class TableProviderImpl implements ExtendedTableProvider {
     Map<String, DroppableStructuredTable> tables = new HashMap<>();
     Predicate<String> badTableNamePredicate = (s)->(s == null);
     StoreableSerializerDeserializer codec = new JSONStoreableSerializerDeserializer();
-    ReadWriteLock rwl = new ReentrantReadWriteLock(true);
+    ReadWriteLock tablesPoolRWL = new ReentrantReadWriteLock(true);
+    ReadWriteLock tableProviderIsClosedRWL = new ReentrantReadWriteLock(true);
+    boolean tableProviderIsClosed = false;
     final DroppableStructuredTableFactory tableFactory;
 
     TableProviderImpl(Path path, DroppableStructuredTableFactory tableFactory) throws IOException {
@@ -45,22 +47,35 @@ public class TableProviderImpl implements ExtendedTableProvider {
 
     @Override
     public DroppableStructuredTable getTable(String name) {
-        rwl.readLock().lock();
         try {
+            tableProviderIsClosedRWL.readLock().lock();
+            tablesPoolRWL.writeLock().lock();
+            if (tableProviderIsClosed) {
+                throw new IllegalStateException("tableProviderIsClosed");
+            }
             if (badTableNamePredicate.test(name)) {
                 throw new IllegalArgumentException();
             }
+            if ((tables.get(name) != null) && (tables.get(name).isClosed())) {
+                tables.put(name, tableFactory.createTableFromData(path.resolve(name), codec));
+            }
             return tables.get(name);
+        } catch (IOException e) {
+            throw new IllegalStateException("can't restore closed table " + name);
         } finally {
-            rwl.readLock().unlock();
+            tablesPoolRWL.writeLock().unlock();
+            tableProviderIsClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public DroppableStructuredTable createTable(String name, List<Class<?>> columnTypes) throws IOException {
-        rwl.writeLock().lock();
         try {
-
+            tableProviderIsClosedRWL.readLock().lock();
+            tablesPoolRWL.writeLock().lock();
+            if (tableProviderIsClosed) {
+                throw new IllegalStateException("tableProviderIsClosed");
+            }
             if (badTableNamePredicate.test(name)) {
                 throw new IllegalArgumentException("tableName is incorrect");
             }
@@ -81,15 +96,19 @@ public class TableProviderImpl implements ExtendedTableProvider {
             return tables.get(name);
 
         } finally {
-            rwl.writeLock().unlock();
+            tablesPoolRWL.writeLock().unlock();
+            tableProviderIsClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public void removeTable(String name) throws IOException {
-        rwl.writeLock().lock();
         try {
-
+            tableProviderIsClosedRWL.readLock().lock();
+            tablesPoolRWL.writeLock().lock();
+            if (tableProviderIsClosed) {
+                throw new IllegalStateException("tableProviderIsClosed");
+            }
             if (badTableNamePredicate.test(name)) {
                 throw new IllegalArgumentException("tableName is incorrect");
             }
@@ -101,49 +120,105 @@ public class TableProviderImpl implements ExtendedTableProvider {
             tables.remove(name);
 
         } finally {
-            rwl.writeLock().unlock();
+            tablesPoolRWL.writeLock().unlock();
+            tableProviderIsClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public Storeable deserialize(Table table, String value) throws ParseException {
-        return codec.deserialize(getSignature(table), value);
+        try {
+            tableProviderIsClosedRWL.readLock().lock();
+            if (tableProviderIsClosed) {
+                throw new IllegalStateException("tableProviderIsClosed");
+            }
+            return codec.deserialize(getSignature(table), value);
+        } finally {
+            tableProviderIsClosedRWL.readLock().unlock();
+        }
     }
 
     @Override
     public String serialize(Table table, Storeable value) throws ColumnFormatException {
-        return codec.serialize(getSignature(table), value);
+        try {
+            tableProviderIsClosedRWL.readLock().lock();
+            if (tableProviderIsClosed) {
+                throw new IllegalStateException("tableProviderIsClosed");
+            }
+            return codec.serialize(getSignature(table), value);
+        } finally {
+            tableProviderIsClosedRWL.readLock().unlock();
+        }
     }
 
     @Override
     public Storeable createFor(Table table) {
-        return new StoreableImpl(getSignature(table));
+        try {
+            tableProviderIsClosedRWL.readLock().lock();
+            if (tableProviderIsClosed) {
+                throw new IllegalStateException("tableProviderIsClosed");
+            }
+            return new StoreableImpl(getSignature(table));
+        } finally {
+            tableProviderIsClosedRWL.readLock().unlock();
+        }
     }
 
     @Override
     public Storeable createFor(Table table, List<?> values) throws ColumnFormatException, IndexOutOfBoundsException {
-        Storeable storeable = new StoreableImpl(getSignature(table));
-        for (int i = 0; i < values.size(); ++i) {
-            storeable.setColumnAt(i, values.get(i));
+        try {
+            tableProviderIsClosedRWL.readLock().lock();
+            if (tableProviderIsClosed) {
+                throw new IllegalStateException("tableProviderIsClosed");
+            }
+            Storeable storeable = new StoreableImpl(getSignature(table));
+            for (int i = 0; i < values.size(); ++i) {
+                storeable.setColumnAt(i, values.get(i));
+            }
+            return storeable;
+        } finally {
+            tableProviderIsClosedRWL.readLock().unlock();
         }
-        return storeable;
     }
 
     private List<SignatureElement> getSignature(Table table) {
-        List<SignatureElement> signature = new ArrayList<>();
-        for (int i = 0; i < table.getColumnsCount(); ++i) {
-            signature.add(SignatureElement.getSignatureElementByClass(table.getColumnType(i)));
+        try {
+            tableProviderIsClosedRWL.readLock().lock();
+            if (tableProviderIsClosed) {
+                throw new IllegalStateException("tableProviderIsClosed");
+            }
+            List<SignatureElement> signature = new ArrayList<>();
+            for (int i = 0; i < table.getColumnsCount(); ++i) {
+                signature.add(SignatureElement.getSignatureElementByClass(table.getColumnType(i)));
+            }
+            return signature;
+        } finally {
+            tableProviderIsClosedRWL.readLock().unlock();
         }
-        return signature;
     }
 
     @Override
     public List<String> getTableNames() {
-        rwl.readLock().lock();
+        tableProviderIsClosedRWL.readLock().lock();
+        tablesPoolRWL.readLock().lock();
         try {
+            if (tableProviderIsClosed) {
+                throw new IllegalStateException("tableProviderIsClosed");
+            }
             return new ArrayList<>(tables.keySet());
         } finally {
-            rwl.readLock().unlock();
+            tablesPoolRWL.readLock().unlock();
+            tableProviderIsClosedRWL.readLock().unlock();
+        }
+    }
+
+    @Override
+    public void close() throws Exception {
+        try {
+            tableProviderIsClosedRWL.writeLock().lock();
+            tableProviderIsClosed = true;
+        } finally {
+            tableProviderIsClosedRWL.writeLock().lock();
         }
     }
 }

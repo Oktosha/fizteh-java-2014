@@ -28,8 +28,8 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
     StringTableWithDiff backEndTable;
     List<SignatureElement> signature;
     StoreableSerializerDeserializer codec;
-    private boolean tableIsDropped = false;
-    private final ReadWriteLock beingDroppedRWL = new ReentrantReadWriteLock(true);
+    private boolean tableIsClosed = false;
+    private final ReadWriteLock beingClosedRWL = new ReentrantReadWriteLock(true);
 
 
     public DroppableStructuredTableImpl(Path path, StoreableSerializerDeserializer codec) throws IOException {
@@ -110,10 +110,10 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
 
     @Override
     public Storeable put(String key, Storeable value) throws ColumnFormatException {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             try {
                 String encodedValue = backEndTable.put(key, codec.serialize(signature, value));
@@ -125,16 +125,16 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
                 throw new IllegalStateException("failed to deserialize held value");
             }
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public Storeable remove(String key) {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             try {
                 String encodedValue = backEndTable.remove(key);
@@ -146,120 +146,120 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
                 throw new IllegalStateException("failed to deserialize held value");
             }
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public int size() {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             return backEndTable.size();
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public List<String> list() {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             return backEndTable.list();
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public int commit() throws IOException {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             return backEndTable.commit();
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public int rollback() {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             return backEndTable.rollback();
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public int getNumberOfUncommittedChanges() {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             return backEndTable.getNumberOfUncommittedChanges();
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public int getColumnsCount() {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             return signature.size();
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public Class<?> getColumnType(int columnIndex) throws IndexOutOfBoundsException {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             return signature.get(columnIndex).getJavaClass();
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public String getName() {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             return backEndTable.getName();
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public Storeable get(String key) {
-        beingDroppedRWL.readLock().lock();
+        beingClosedRWL.readLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             try {
                 String encodedValue = backEndTable.get(key);
@@ -271,37 +271,60 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
                 throw new IllegalStateException("failed to deserialize held value");
             }
         } finally {
-            beingDroppedRWL.readLock().unlock();
-        }
-    }
-
-    @Override
-    public void drop() throws IOException {
-        beingDroppedRWL.writeLock().lock();
-        try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
-            backEndTable.clear();
-            Files.deleteIfExists(path.resolve("signature.tsv"));
-            Files.deleteIfExists(path);
-            tableIsDropped = true;
-        } finally {
-            beingDroppedRWL.writeLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
     }
 
     @Override
     public void setDiff(Diff diff) {
         try {
-            beingDroppedRWL.readLock().lock();
-            if (tableIsDropped) {
-                throw new IllegalStateException();
+            beingClosedRWL.readLock().lock();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
             }
             backEndTable.setDiff(diff);
         } finally {
-            beingDroppedRWL.readLock().unlock();
+            beingClosedRWL.readLock().unlock();
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        try {
+            beingClosedRWL.writeLock().lock();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
+            }
+            tableIsClosed = true;
+            backEndTable.rollback();
+        } finally {
+            beingClosedRWL.writeLock().unlock();
+        }
+    }
+
+    /* Dropping table from table (not from table provider) will make him to create new empty table instead */
+
+    @Override
+    public void drop() throws IOException {
+        try {
+            beingClosedRWL.writeLock().lock();
+            if (tableIsClosed) {
+                throw new IllegalStateException("tableIsDropped");
+            }
+            backEndTable.clear();
+            Files.deleteIfExists(path.resolve("signature.tsv"));
+            Files.deleteIfExists(path);
+            tableIsClosed = true;
+        } finally {
+            beingClosedRWL.writeLock().unlock();
+        }
+    }
+
+    /* Method for table provider to learn something about dropped/closed table */
+
+    @Override
+    public boolean isClosed() {
+        return tableIsClosed;
     }
 }
 
