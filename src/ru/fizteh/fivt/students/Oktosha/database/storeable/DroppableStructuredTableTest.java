@@ -132,5 +132,10 @@ public class DroppableStructuredTableTest {
     public void testDrop() throws Exception {
         table.drop();
         assertFalse(path.toFile().exists());
-   }
+    }
+
+    @Test
+    public void testToString() throws Exception {
+        assertTrue(table.toString().startsWith("DroppableStructuredTableImpl[/"));
+    }
 }

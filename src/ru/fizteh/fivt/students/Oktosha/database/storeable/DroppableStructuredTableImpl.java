@@ -320,11 +320,16 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         }
     }
 
-    /* Method for table provider to learn something about dropped/closed table */
+    /* Method that ignore closed state */
 
     @Override
     public boolean isClosed() {
         return tableIsClosed;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[" + path.toAbsolutePath().toString() + "]";
     }
 }
 
