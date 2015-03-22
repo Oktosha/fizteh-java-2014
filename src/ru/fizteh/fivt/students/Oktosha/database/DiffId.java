@@ -10,6 +10,16 @@ public final class DiffId {
         this.id = id;
     }
 
+    public DiffId(String s) {
+        if (s == null) {
+            throw new NumberFormatException("invalid DiffId");
+        }
+        id = Integer.parseInt(s);
+        if (id < 0 || id > 1000000) {
+            throw new NumberFormatException("invalid DiffId");
+        }
+    }
+
     public boolean canBeIncreased() {
         return id < 1000000;
     }

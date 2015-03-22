@@ -12,6 +12,6 @@ public interface DiffManager {
     int freeDiffsForTable(DroppableStructuredTable table); /* returns number of released diffs */
     void freeDiff(DroppableStructuredTable table, DiffId id);
     DiffId createDiff(DroppableStructuredTable table) throws PoolIsFullException;
-    Map<String, String> getDiff(DiffId id);
+    Diff getDiff(DiffId id);
     DroppableStructuredTable getTableForDiff(DiffId id);
 }

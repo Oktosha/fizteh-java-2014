@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class DiffManagerImpl implements DiffManager {
     private final ReadWriteLock rwl;  /* protects diff pool */
-    private final Map<DiffId, Map<String, String>> idToMap;
+    private final Map<DiffId, Diff> idToMap;
     private final Map<DiffId, DroppableStructuredTable> idToTable;
     private final IdentityHashMap<DroppableStructuredTable, Set<DiffId>>  tableToId;
     private final Set<DiffId> releasedIds;
@@ -72,7 +72,7 @@ public class DiffManagerImpl implements DiffManager {
                 throw new PoolIsFullException("unable to create new id; "
                                               + "finish some other transactions and try again");
             }
-            idToMap.put(newId, new HashMap<>());
+            idToMap.put(newId, new Diff());
             idToTable.put(newId, table);
             if (!tableToId.containsKey(table)) {
                 tableToId.put(table, new LinkedHashSet<>());
@@ -85,7 +85,7 @@ public class DiffManagerImpl implements DiffManager {
     }
 
     @Override
-    public Map<String, String> getDiff(DiffId id) {
+    public Diff getDiff(DiffId id) {
         if (id == null) {
             throw new IllegalStateException("diffManager is asked for null diff id");
         }
