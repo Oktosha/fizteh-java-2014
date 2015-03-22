@@ -57,7 +57,7 @@ public class TableProviderTest {
         value1.setColumnAt(3, 36.6);
         value1.setColumnAt(4, "world");
 
-        tableProvider = new TableProviderImpl(path);
+        tableProvider = new TableProviderImpl(path, new SimpleDroppableStructuredTableFactory());
         table1 = tableProvider.createTable("table1", columnTypes);
     }
 
@@ -92,7 +92,7 @@ public class TableProviderTest {
 
     @Test
     public void testLoad() throws Exception {
-        tableProvider = new TableProviderImpl(path);
+        tableProvider = new TableProviderImpl(path, new SimpleDroppableStructuredTableFactory());
         assertEquals(Arrays.asList("table1"), tableProvider.getTableNames());
     }
 

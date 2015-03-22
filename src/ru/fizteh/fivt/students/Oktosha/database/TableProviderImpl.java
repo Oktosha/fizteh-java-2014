@@ -28,15 +28,17 @@ public class TableProviderImpl implements TableProvider {
     Predicate<String> badTableNamePredicate = (s)->(s == null);
     StoreableSerializerDeserializer codec = new JSONStoreableSerializerDeserializer();
     ReadWriteLock rwl = new ReentrantReadWriteLock(true);
+    final DroppableStructuredTableFactory tableFactory;
 
-    TableProviderImpl(Path path) throws IOException {
+    TableProviderImpl(Path path, DroppableStructuredTableFactory tableFactory) throws IOException {
         this.path = path;
+        this.tableFactory = tableFactory;
         if (!this.path.toFile().isDirectory()) {
             throw new IOException("bd dir is not a dir");
         }
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, (f)->(f.toFile().isDirectory()))) {
             for (Path tableDir : stream) {
-                tables.put(tableDir.getFileName().toString(), new DroppableStructuredTableImpl(tableDir, codec));
+                tables.put(tableDir.getFileName().toString(), tableFactory.createTableFromData(tableDir, codec));
             }
         }
     }
@@ -75,7 +77,7 @@ public class TableProviderImpl implements TableProvider {
                 }
             }
 
-            tables.put(name, new DroppableStructuredTableImpl(path.resolve(name), codec, signature));
+            tables.put(name, tableFactory.createEmptyTable(path.resolve(name), codec, signature));
             return tables.get(name);
 
         } finally {

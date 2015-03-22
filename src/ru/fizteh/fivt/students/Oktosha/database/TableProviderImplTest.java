@@ -56,7 +56,7 @@ public class TableProviderImplTest {
 
         serializedValue1 = "[true,\"hello\",42,36.6,\"world\"]";
 
-        tableProvider = new TableProviderImpl(path);
+        tableProvider = new TableProviderImpl(path, new SimpleDroppableStructuredTableFactory());
         table1 = tableProvider.createTable("table1", columnTypes);
     }
 

@@ -12,6 +12,6 @@ import java.nio.file.Paths;
 public class TableProviderFactoryImpl implements TableProviderFactory {
     @Override
     public TableProvider create(String path) throws IOException {
-        return new TableProviderImpl(Paths.get(path));
+        return new TableProviderImpl(Paths.get(path), new SimpleDroppableStructuredTableFactory());
     }
 }
