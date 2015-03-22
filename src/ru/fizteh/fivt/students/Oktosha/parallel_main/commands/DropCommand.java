@@ -3,6 +3,7 @@ package ru.fizteh.fivt.students.Oktosha.parallel_main.commands;
 import ru.fizteh.fivt.students.Oktosha.commander.AbstractCommand;
 import ru.fizteh.fivt.students.Oktosha.commander.CommandExecutionException;
 import ru.fizteh.fivt.students.Oktosha.commander.Context;
+import ru.fizteh.fivt.students.Oktosha.database.storeable.DroppableStructuredTable;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 public class DropCommand extends AbstractCommand {
     @Override
     public String getName() {
-        return "clear";
+        return "drop";
     }
 
     @Override
@@ -26,10 +27,12 @@ public class DropCommand extends AbstractCommand {
             context.setCurrentTable(null);
         }
         try {
+            DroppableStructuredTable table = context.getTableProvider().getTable(arguments.get(1));
             context.getTableProvider().removeTable(arguments.get(1));
+            context.getDiffManager().freeDiffsForTable(table);
         } catch (IOException e) {
             throw new CommandExecutionException(getName()
-                                                + "error: failed to clear table "
+                                                + "error: failed to drop table "
                                                 + arguments.get(1) + ":" + e.getMessage(), e);
         }
         println(context, "dropped");
