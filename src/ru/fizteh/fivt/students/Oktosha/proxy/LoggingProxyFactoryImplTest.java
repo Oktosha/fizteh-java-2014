@@ -21,11 +21,11 @@ public class LoggingProxyFactoryImplTest {
         int x = 0;
 
         public int sumWithX(int y) {
-            return y;
+            return y + x;
         }
 
         public void incX() {
-            ++x;
+            x = x + 1;
         }
 
         public void throwIOException() throws IOException {
@@ -52,23 +52,23 @@ public class LoggingProxyFactoryImplTest {
     }
 
     SomeInterface wrapped;
+    SomeClass object;
     StringWriter writer;
 
     @Before
     public void setUp() throws Exception {
         writer = new StringWriter();
         LoggingProxyFactory factory = new LoggingProxyFactoryImpl();
-        wrapped = (SomeInterface) factory.wrap(writer,
-                new SomeClass(), SomeInterface.class);
+        object = new SomeClass();
+        wrapped = (SomeInterface) factory.wrap(writer, object, SomeInterface.class);
     }
 
     @Test
     public void testWrap() throws Exception {
-        wrapped.sumWithX(3);
+        assertEquals(3, wrapped.sumWithX(3));
         wrapped.incX();
-        wrapped.sumWithX(3);
+        assertEquals(4, wrapped.sumWithX(3));
         assertNotEquals("", writer.toString());
-        System.out.println(writer.toString());
     }
 
     @Test
