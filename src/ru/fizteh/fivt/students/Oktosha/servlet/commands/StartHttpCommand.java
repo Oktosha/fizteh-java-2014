@@ -20,6 +20,9 @@ public class StartHttpCommand extends AbstractCommand {
 
     @Override
     public void exec(Context context, List<String> arguments) throws CommandExecutionException {
+        if (arguments.size() == 1) {
+            arguments.add("10001");
+        }
         checkArguments(arguments, 2);
         HTTPServer server = context.getServer();
         if (server.isRunning()) {
