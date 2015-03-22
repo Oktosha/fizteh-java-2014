@@ -86,6 +86,9 @@ public class DiffManagerImpl implements DiffManager {
 
     @Override
     public Map<String, String> getDiff(DiffId id) {
+        if (id == null) {
+            throw new IllegalStateException("diffManager is asked for null diff id");
+        }
         try {
             rwl.readLock().lock();
             return idToMap.get(id);
