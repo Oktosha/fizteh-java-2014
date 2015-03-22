@@ -18,8 +18,11 @@ public class RollbackServlet extends AbstractServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         DroppableStructuredTable switchedTable = switchToTransaction(req, resp);
+        if (switchedTable == null) {
+            return;
+        }
         try {
-            resp.getWriter().write(switchedTable.rollback());
+            resp.getWriter().write(String.valueOf(switchedTable.rollback()));
             resp.setStatus(200);
         } catch (Throwable e) {
             resp.sendError(500, e.getMessage());

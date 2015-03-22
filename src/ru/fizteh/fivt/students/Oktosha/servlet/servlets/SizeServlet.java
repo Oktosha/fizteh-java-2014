@@ -19,8 +19,11 @@ public class SizeServlet extends AbstractServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         DroppableStructuredTable switchedTable = switchToTransaction(req, resp);
+        if (switchedTable == null) {
+            return;
+        }
         try {
-        resp.getWriter().write(switchedTable.size());
+        resp.getWriter().write(String.valueOf(switchedTable.size()));
         resp.setStatus(200);
         } catch (Throwable e) {
             resp.sendError(500, e.getMessage());

@@ -15,7 +15,7 @@ public class DiffManagerImpl implements DiffManager {
     private final Map<DiffId, DroppableStructuredTable> idToTable;
     private final IdentityHashMap<DroppableStructuredTable, Set<DiffId>>  tableToId;
     private final Set<DiffId> releasedIds;
-    private final DiffId maxId;
+    private DiffId maxId;
 
     public DiffManagerImpl() {
         this.rwl = new ReentrantReadWriteLock(true);
@@ -66,8 +66,8 @@ public class DiffManagerImpl implements DiffManager {
                 newId = releasedIds.iterator().next();
                 releasedIds.remove(newId);
             } else if (maxId.canBeIncreased()) {
-                newId = new DiffId(maxId.toInt());
-                maxId.increase();
+                newId = maxId;
+                maxId = maxId.increased();
             } else {
                 throw new PoolIsFullException("unable to create new id; "
                                               + "finish some other transactions and try again");

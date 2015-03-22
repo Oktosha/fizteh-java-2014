@@ -4,7 +4,7 @@ package ru.fizteh.fivt.students.Oktosha.database;
  * Created by DKolodzey on 22.03.15.
  */
 public final class DiffId {
-    private int id;
+    private final int id;
 
     public DiffId(int id) {
         this.id = id;
@@ -24,8 +24,8 @@ public final class DiffId {
         return id < 1000000;
     }
 
-    public void increase() {
-        ++id;
+    public DiffId increased() {
+        return new DiffId(id + 1);
     }
 
     public int toInt() {
@@ -35,5 +35,15 @@ public final class DiffId {
     @Override
     public String toString() {
         return String.format("%05d", id);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj != null) && (obj instanceof DiffId) && (((DiffId) obj).toInt() == id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id;
     }
 }

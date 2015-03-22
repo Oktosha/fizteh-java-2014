@@ -21,6 +21,9 @@ public class PutServlet extends AbstractServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         DroppableStructuredTable switchedTable = switchToTransaction(req, resp);
+        if (switchedTable == null) {
+            return;
+        }
         String key = getParameter("key", req, resp);
         if (key == null) {
             return;
@@ -32,7 +35,11 @@ public class PutServlet extends AbstractServlet {
         try {
             Storeable oldValue = switchedTable.put(key,
                     getContext().getTableProvider().deserialize(switchedTable, value));
-            resp.getWriter().write(getContext().getTableProvider().serialize(switchedTable, oldValue));
+            if (oldValue == null) {
+                resp.getWriter().write("new");
+            } else {
+                resp.getWriter().write(getContext().getTableProvider().serialize(switchedTable, oldValue));
+            }
             resp.setStatus(200);
         } catch (ParseException e) {
             resp.sendError(400, "invalid value");
