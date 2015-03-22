@@ -4,7 +4,6 @@ import ru.fizteh.fivt.storage.structured.Table;
 import ru.fizteh.fivt.students.Oktosha.database.Diff;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by DKolodzey on 11.03.15.

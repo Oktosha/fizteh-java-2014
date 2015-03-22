@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class StringTableWithDiffImpl implements StringTableWithDiff {
 
-    private MultiFileMap multiFileMap;
+    private final MultiFileMap multiFileMap;
     private final ThreadLocal<Diff> diff = new ThreadLocal<>();
     private final ReadWriteLock backEndRWL; /* protects reading/writing to files */
 

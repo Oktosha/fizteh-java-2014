@@ -45,7 +45,7 @@ public class DiffManagerImpl implements DiffManager {
     }
 
     @Override
-    public void freeDiff(DroppableStructuredTable table, DiffId id) {
+    public void freeDiff(DiffId id) {
         try {
             rwl.writeLock().lock();
             tableToId.get(idToTable.get(id)).remove(id);
@@ -61,7 +61,7 @@ public class DiffManagerImpl implements DiffManager {
     public DiffId createDiff(DroppableStructuredTable table) throws PoolIsFullException {
         try {
             rwl.writeLock().lock();
-            DiffId newId = null;
+            DiffId newId;
             if (!releasedIds.isEmpty()) {
                 newId = releasedIds.iterator().next();
                 releasedIds.remove(newId);

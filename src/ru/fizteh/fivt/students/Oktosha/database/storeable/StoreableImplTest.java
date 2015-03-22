@@ -11,7 +11,7 @@ import static org.junit.Assert.*;
 
 public class StoreableImplTest {
 
-    Storeable value;
+    private Storeable value;
 
     @Before
     public void setUp() {

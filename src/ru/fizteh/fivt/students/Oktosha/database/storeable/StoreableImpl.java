@@ -12,8 +12,8 @@ import java.util.List;
  */
 public class StoreableImpl implements Storeable {
 
-    final List<SignatureElement> signature;
-    final Object[] columns;
+    private final List<SignatureElement> signature;
+    private final Object[] columns;
 
     public StoreableImpl(List<SignatureElement> signature) {
         this.signature = signature;

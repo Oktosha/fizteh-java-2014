@@ -18,8 +18,8 @@ public class MultiFileMapTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    Path path;
-    MultiFileMap multiFileMap;
+    private Path path;
+    private MultiFileMap multiFileMap;
 
     @Before
     public void setUp() throws Exception {

@@ -23,13 +23,13 @@ public class TableProviderImplTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    Path path;
-    TableProvider tableProvider;
-    List<Class<?>> columnTypes;
-    List<SignatureElement> signature;
-    Table table1; //like "new folder 1"
-    Storeable value1;
-    String serializedValue1;
+    private Path path;
+    private TableProvider tableProvider;
+    private List<Class<?>> columnTypes;
+    private List<SignatureElement> signature;
+    private Table table1; //like "new folder 1"
+    private Storeable value1;
+    private String serializedValue1;
 
     @Before
     public void setUp() throws Exception {

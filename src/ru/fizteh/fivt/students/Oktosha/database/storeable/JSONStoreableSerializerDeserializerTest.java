@@ -11,9 +11,9 @@ import static org.junit.Assert.*;
 
 public class JSONStoreableSerializerDeserializerTest {
 
-    List<SignatureElement> signature;
-    StoreableSerializerDeserializer storeableSerializerDeserializer;
-    Storeable value;
+    private List<SignatureElement> signature;
+    private StoreableSerializerDeserializer storeableSerializerDeserializer;
+    private Storeable value;
 
     @Before
     public void setUp() {

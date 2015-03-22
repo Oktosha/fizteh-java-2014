@@ -10,11 +10,11 @@ import java.util.List;
 
 /**
  * Created by DKolodzey on 02.03.15.
- * class to work with multiple Filemaps
+ * class to work with multiple FileMaps
  */
 public class MultiFileMapImpl implements MultiFileMap {
 
-    private FileMap[][] fileMaps;
+    private final FileMap[][] fileMaps;
     private Path path;
 
     public MultiFileMapImpl(Path path) throws IOException {

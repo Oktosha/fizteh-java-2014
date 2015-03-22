@@ -14,9 +14,9 @@ import java.util.List;
  */
 public class LoggingDroppableStructuredTableFactory implements DroppableStructuredTableFactory {
 
-    DroppableStructuredTableFactory tableFactory = new SimpleDroppableStructuredTableFactory();
-    LoggingProxyFactory loggingFactory = new LoggingProxyFactoryImpl();
-    Writer writer = new OutputStreamWriter(System.out);
+    private final DroppableStructuredTableFactory tableFactory = new SimpleDroppableStructuredTableFactory();
+    private final LoggingProxyFactory loggingFactory = new LoggingProxyFactoryImpl();
+    private Writer writer = new OutputStreamWriter(System.out);
 
     public LoggingDroppableStructuredTableFactory(Writer writer) {
         this.writer = writer;

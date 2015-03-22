@@ -51,7 +51,7 @@ class JobParsingAutomaton {
         ACCEPTED(3),
         DECLINED(4);
 
-        int ord;
+        private final int ord;
         private State(int ord) {
             this.ord = ord;
         }

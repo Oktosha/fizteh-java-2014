@@ -13,10 +13,10 @@ import static org.mockito.Mockito.*;
 
 public class InteractiveInterpreterTest {
 
-    List<Command> commands;
-    Writer errorWriter;
-    Writer outputWriter;
-    Interpreter interpreter;
+    private List<Command> commands;
+    private Writer errorWriter;
+    private Writer outputWriter;
+    private Interpreter interpreter;
 
     @Before
     public void setUp() throws Exception {

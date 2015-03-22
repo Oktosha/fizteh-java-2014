@@ -23,14 +23,14 @@ import java.util.function.Predicate;
  * Thread safe implementation of TableProvider
  */
 public class TableProviderImpl implements ExtendedTableProvider {
-    Path path;
-    Map<String, DroppableStructuredTable> tables = new HashMap<>();
-    Predicate<String> badTableNamePredicate = (s)->(s == null);
-    StoreableSerializerDeserializer codec = new JSONStoreableSerializerDeserializer();
-    ReadWriteLock tablesPoolRWL = new ReentrantReadWriteLock(true);
-    ReadWriteLock tableProviderIsClosedRWL = new ReentrantReadWriteLock(true);
-    boolean tableProviderIsClosed = false;
-    final DroppableStructuredTableFactory tableFactory;
+    private final Path path;
+    private final Map<String, DroppableStructuredTable> tables = new HashMap<>();
+    private final Predicate<String> badTableNamePredicate = (s)->(s == null);
+    private final StoreableSerializerDeserializer codec = new JSONStoreableSerializerDeserializer();
+    private final ReadWriteLock tablesPoolRWL = new ReentrantReadWriteLock(true);
+    private final ReadWriteLock tableProviderIsClosedRWL = new ReentrantReadWriteLock(true);
+    private boolean tableProviderIsClosed = false;
+    private final DroppableStructuredTableFactory tableFactory;
 
     TableProviderImpl(Path path, DroppableStructuredTableFactory tableFactory) throws IOException {
         this.path = path;

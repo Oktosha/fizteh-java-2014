@@ -18,7 +18,7 @@ import java.util.List;
  */
 public class LoggingTableProviderFactory implements ExtendedTableProviderFactory {
     private Writer writer = new OutputStreamWriter(System.out);
-    private List<ExtendedTableProvider> tableProviders = new ArrayList<>();
+    private final List<ExtendedTableProvider> tableProviders = new ArrayList<>();
     private boolean isDropped = false;
 
     public void setWriter(Writer writer) {

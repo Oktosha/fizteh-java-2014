@@ -24,10 +24,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class DroppableStructuredTableImpl implements DroppableStructuredTable {
 
-    Path path;
-    StringTableWithDiff backEndTable;
-    List<SignatureElement> signature;
-    StoreableSerializerDeserializer codec;
+    private Path path;
+    private StringTableWithDiff backEndTable;
+    private List<SignatureElement> signature;
+    private StoreableSerializerDeserializer codec;
     private boolean tableIsClosed = false;
     private final ReadWriteLock beingClosedRWL = new ReentrantReadWriteLock(true);
 
@@ -71,7 +71,7 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         this.codec = codec;
     }
 
-    public static List<SignatureElement> readSignature(Path signaturePath) throws IOException {
+    private static List<SignatureElement> readSignature(Path signaturePath) throws IOException {
         if (!signaturePath.toFile().exists()) {
             throw new IOException("bd does not contain signature");
         }
@@ -92,7 +92,7 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
         return signature;
     }
 
-    public static void writeSignature(Path signaturePath, List<SignatureElement> signature) throws IOException {
+    private static void writeSignature(Path signaturePath, List<SignatureElement> signature) throws IOException {
         if (signaturePath.toFile().exists()) {
             throw new IOException("bd already contains signature; can't write");
         }

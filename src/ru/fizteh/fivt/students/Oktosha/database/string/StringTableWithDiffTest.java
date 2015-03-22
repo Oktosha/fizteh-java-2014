@@ -16,9 +16,9 @@ import static org.junit.Assert.*;
 
 public class StringTableWithDiffTest {
 
-    StringTableWithDiff stringTableWithDiff;
-    MultiFileMap multiFileMap;
-    Path path;
+    private StringTableWithDiff stringTableWithDiff;
+    private MultiFileMap multiFileMap;
+    private Path path;
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();

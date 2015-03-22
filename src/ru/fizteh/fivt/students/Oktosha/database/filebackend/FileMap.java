@@ -17,12 +17,12 @@ import java.util.function.Predicate;
  * FileMap doesn't hold null in keys or values,
  * also you can add additional checks passing predicates to constructor
  */
-public class FileMap {
+class FileMap {
 
     private Map<String, String> data;
-    private Path path;
-    private Predicate<String> badKeyPredicate;
-    private Predicate<String> badValuePredicate;
+    private final Path path;
+    private final Predicate<String> badKeyPredicate;
+    private final Predicate<String> badValuePredicate;
 
     public FileMap(Path path) throws IOException {
         this(path, (s)->s == null, (s)->s == null);

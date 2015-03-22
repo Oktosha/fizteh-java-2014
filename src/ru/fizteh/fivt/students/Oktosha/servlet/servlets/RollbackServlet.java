@@ -25,7 +25,7 @@ public class RollbackServlet extends AbstractServlet {
         try {
             resp.getWriter().write(String.valueOf(switchedTable.rollback()));
             resp.setStatus(200);
-            getContext().getDiffManager().freeDiff(switchedTable, new DiffId(req.getParameter("tid")));
+            getContext().getDiffManager().freeDiff(new DiffId(req.getParameter("tid")));
         } catch (Throwable e) {
             resp.sendError(500, e.getMessage());
         }

@@ -19,11 +19,11 @@ public class DroppableStructuredTableTest {
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    Path path;
-    JSONStoreableSerializerDeserializer codec;
-    List<SignatureElement> signature;
-    DroppableStructuredTable table;
-    List<Storeable> values;
+    private Path path;
+    private JSONStoreableSerializerDeserializer codec;
+    private List<SignatureElement> signature;
+    private DroppableStructuredTable table;
+    private List<Storeable> values;
 
     @Before
     public void setUp() throws Exception {

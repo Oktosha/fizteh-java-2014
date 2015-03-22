@@ -1,7 +1,6 @@
 package ru.fizteh.fivt.students.Oktosha.commander;
 
 import ru.fizteh.fivt.storage.structured.Table;
-import ru.fizteh.fivt.storage.structured.TableProvider;
 import ru.fizteh.fivt.students.Oktosha.database.DiffManager;
 import ru.fizteh.fivt.students.Oktosha.database.DiffManagerImpl;
 import ru.fizteh.fivt.students.Oktosha.database.tableprovider.ExtendedTableProvider;

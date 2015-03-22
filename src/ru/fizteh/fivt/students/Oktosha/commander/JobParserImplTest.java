@@ -24,6 +24,6 @@ public class JobParserImplTest {
 
     @Test (expected = ParseException.class)
     public void testParse1() throws Exception {
-        new JobParserImpl().parse(" smth\"  smth");
+        new JobParserImpl().parse(" something\"  something");
     }
 }
