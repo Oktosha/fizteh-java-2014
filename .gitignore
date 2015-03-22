@@ -1,3 +1,4 @@
+.DS_Store
 *.class
 
 # Mobile Tools for Java (J2ME)
@@ -6,6 +7,7 @@
 # Package Files #
 *.war
 *.ear
+*.class
 
 hs_err_pid*
 
@@ -17,9 +19,10 @@ jars
 
 .classpath
 .project
+workbench.xmi
+*.swp
 
 .settings
 .checkstyle
-
-# Added by Oktosha (Kolodzey, 394); mac-specific ignore
-.DS_Store
+/MultiFileHashMap/nbproject/private/
+/MultiFileHashMap/build/
