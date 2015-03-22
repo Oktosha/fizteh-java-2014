@@ -1,7 +1,7 @@
 package ru.fizteh.fivt.students.Oktosha.parallel_main;
 
-import ru.fizteh.fivt.storage.structured.TableProvider;
 import ru.fizteh.fivt.students.Oktosha.commander.*;
+import ru.fizteh.fivt.students.Oktosha.database.tableprovider.ExtendedTableProvider;
 import ru.fizteh.fivt.students.Oktosha.database.tableprovider.SimpleTableProviderFactory;
 import ru.fizteh.fivt.students.Oktosha.parallel_main.commands.*;
 
@@ -21,7 +21,7 @@ public class ParallelMain {
             return;
         }
 
-        TableProvider tableProvider;
+        ExtendedTableProvider tableProvider;
         try {
             tableProvider = new SimpleTableProviderFactory().create(property);
         } catch (IOException e) {

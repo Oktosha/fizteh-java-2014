@@ -2,6 +2,11 @@ package ru.fizteh.fivt.students.Oktosha.commander;
 
 import ru.fizteh.fivt.storage.structured.Table;
 import ru.fizteh.fivt.storage.structured.TableProvider;
+import ru.fizteh.fivt.students.Oktosha.database.DiffManager;
+import ru.fizteh.fivt.students.Oktosha.database.DiffManagerImpl;
+import ru.fizteh.fivt.students.Oktosha.database.tableprovider.ExtendedTableProvider;
+import ru.fizteh.fivt.students.Oktosha.servlet.HTTPServer;
+import ru.fizteh.fivt.students.Oktosha.servlet.HTTPServerImpl;
 
 import java.io.Writer;
 
@@ -10,12 +15,14 @@ import java.io.Writer;
  */
 public class ContextImpl implements Context {
 
-    private final TableProvider tableProvider;
+    private final ExtendedTableProvider tableProvider;
     private Table currentTable;
     private boolean exitRequested;
     private final Writer outputWriter;
+    private final HTTPServer server = new HTTPServerImpl();
+    private final DiffManager diffManager = new DiffManagerImpl();
 
-    public ContextImpl(TableProvider tableProvider, Writer outputWriter) {
+    public ContextImpl(ExtendedTableProvider tableProvider, Writer outputWriter) {
         this.tableProvider = tableProvider;
         this.outputWriter = outputWriter;
         this.currentTable = null;
@@ -23,13 +30,23 @@ public class ContextImpl implements Context {
     }
 
     @Override
-    public TableProvider getTableProvider() {
+    public ExtendedTableProvider getTableProvider() {
         return tableProvider;
     }
 
     @Override
     public Writer getOutputWriter() {
         return outputWriter;
+    }
+
+    @Override
+    public HTTPServer getServer() {
+        return server;
+    }
+
+    @Override
+    public DiffManager getDiffManager() {
+        return diffManager;
     }
 
     @Override

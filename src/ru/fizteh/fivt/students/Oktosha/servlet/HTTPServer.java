@@ -6,7 +6,7 @@ import java.net.InetSocketAddress;
  * Created by DKolodzey on 22.03.15.
  */
 public interface HTTPServer {
-    void start(InetSocketAddress address, ServletContext context);
-    void stop();
+    void start(InetSocketAddress address, ServletContext context) throws Exception;
+    void stop() throws Exception;
     boolean isRunning();
 }

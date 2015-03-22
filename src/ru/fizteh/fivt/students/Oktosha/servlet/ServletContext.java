@@ -7,8 +7,7 @@ import ru.fizteh.fivt.students.Oktosha.database.tableprovider.ExtendedTableProvi
 /**
  * Created by DKolodzey on 22.03.15.
  */
-public interface ServletContext extends Context {
+public interface ServletContext {
     ExtendedTableProvider getTableProvider();
-    HTTPServer getServer();
     DiffManager getDiffManager();
 }
