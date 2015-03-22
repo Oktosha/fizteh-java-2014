@@ -1,17 +1,22 @@
 package ru.fizteh.fivt.students.Oktosha.proxy;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 
+import java.io.IOException;
 import java.io.StringWriter;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class XMLInvocationSerializerTest {
 
@@ -37,8 +42,51 @@ public class XMLInvocationSerializerTest {
                             + "    </value>\n"
                             + "</list>\n";
 
+    class SomeClass {
+        int x = 0;
+
+        public int sumWithX(int y) {
+            return y;
+        }
+
+        public void incX() {
+            ++x;
+        }
+    }
+
+    String voidMethodInvoke = "<invoke timestamp=\"12345\" "
+            + "class=\"ru.fizteh.fivt.students.Oktosha.proxy.XMLInvocationSerializerTest$SomeClass\" "
+            + "name=\"incX\">"
+            + "<arguments/>"
+            + "</invoke>";
+
+    String intMethodInvoke = "<invoke timestamp=\"12345\" "
+            + "class=\"ru.fizteh.fivt.students.Oktosha.proxy.XMLInvocationSerializerTest$SomeClass\" "
+            + "name=\"sumWithX\">"
+            + "<arguments>"
+            + "<argument>1</argument>"
+            + "</arguments>"
+            + "<return>4</return>"
+            + "</invoke>";
+
+    String exceptionMethodInvoke = "<invoke timestamp=\"12345\" "
+            + "class=\"ru.fizteh.fivt.students.Oktosha.proxy.XMLInvocationSerializerTest$SomeClass\" "
+            + "name=\"sumWithX\">"
+            + "<arguments>"
+            + "<argument>1</argument>"
+            + "</arguments>"
+            + "<thrown>java.io.IOException: azaza exception</thrown>"
+            + "</invoke>";
+
     @Test
-    public void testSerialize() throws Exception {
+    public void testSerializeWithoutIndentation() throws Exception {
+        assertEquals(voidMethodInvoke,
+                serializer.serializeWithoutIndentation(SomeClass.class.getMethod("incX"),
+                        new Object[]{}, SomeClass.class, null, null, 12345));
+        System.out.println(serializer.serializeWithoutIndentation(SomeClass.class.getMethod("sumWithX", int.class),
+                new Object[]{1}, SomeClass.class, 4, null, 12345));
+        System.out.println(serializer.serializeWithoutIndentation(SomeClass.class.getMethod("sumWithX", int.class),
+                new Object[]{1}, SomeClass.class, null, new IOException("azaza exception"), 12345));
     }
 
     @Test
