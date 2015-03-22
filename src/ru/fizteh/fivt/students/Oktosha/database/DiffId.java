@@ -28,8 +28,12 @@ public final class DiffId {
         ++id;
     }
 
+    public int toInt() {
+        return id;
+    }
+
     @Override
     public String toString() {
-        return String.format("%0.5d", id);
+        return String.format("%05d", id);
     }
 }

@@ -5,9 +5,6 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.fizteh.fivt.students.Oktosha.servlet.servlets.BeginServlet;
 import ru.fizteh.fivt.students.Oktosha.servlet.servlets.GetServlet;
-
-import javax.servlet.http.HttpServlet;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 
 /**
@@ -19,13 +16,18 @@ public class HTTPServerImpl implements HTTPServer {
 
     @Override
     public void start(InetSocketAddress address, ServletContext context) throws Exception {
-        server = new Server(address);
-        ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
-        handler.addServlet(new ServletHolder(new GetServlet(context)), "/get");
-        handler.addServlet(new ServletHolder(new BeginServlet(context)), "/begin");
-        handler.setContextPath("/");
-        server.setHandler(handler);
-        server.start();
+        try {
+            server = new Server(address);
+            ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+            handler.addServlet(new ServletHolder(new GetServlet(context)), "/get");
+            handler.addServlet(new ServletHolder(new BeginServlet(context)), "/begin");
+            handler.setContextPath("/");
+            server.setHandler(handler);
+            server.start();
+        } catch (Throwable e) {
+            server = null;
+            throw e;
+        }
     }
 
     @Override

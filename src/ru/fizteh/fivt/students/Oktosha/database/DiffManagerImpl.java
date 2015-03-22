@@ -66,7 +66,7 @@ public class DiffManagerImpl implements DiffManager {
                 newId = releasedIds.iterator().next();
                 releasedIds.remove(newId);
             } else if (maxId.canBeIncreased()) {
-                newId = maxId;
+                newId = new DiffId(maxId.toInt());
                 maxId.increase();
             } else {
                 throw new PoolIsFullException("unable to create new id; "
