@@ -221,4 +221,9 @@ public class TableProviderImpl implements ExtendedTableProvider {
             tableProviderIsClosedRWL.writeLock().lock();
         }
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "[" + path.toAbsolutePath().toString() + "]";
+    }
 }

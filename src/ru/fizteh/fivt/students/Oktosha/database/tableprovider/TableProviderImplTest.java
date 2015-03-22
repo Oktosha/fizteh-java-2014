@@ -72,4 +72,9 @@ public class TableProviderImplTest {
     public void testSerialize() throws Exception {
         assertEquals(serializedValue1, tableProvider.serialize(table1, value1));
     }
+
+    @Test
+    public void testToString() throws Exception {
+        assertTrue(tableProvider.toString().startsWith("TableProviderImpl[/"));
+    }
 }
