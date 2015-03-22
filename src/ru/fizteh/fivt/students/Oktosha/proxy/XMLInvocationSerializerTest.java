@@ -1,6 +1,5 @@
 package ru.fizteh.fivt.students.Oktosha.proxy;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -8,15 +7,12 @@ import javax.xml.stream.XMLStreamWriter;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.IdentityHashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class XMLInvocationSerializerTest {
 

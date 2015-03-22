@@ -1,6 +1,5 @@
 package ru.fizteh.fivt.students.Oktosha.servlet.servlets;
 
-import ru.fizteh.fivt.storage.structured.Storeable;
 import ru.fizteh.fivt.students.Oktosha.database.DiffId;
 import ru.fizteh.fivt.students.Oktosha.database.storeable.DroppableStructuredTable;
 import ru.fizteh.fivt.students.Oktosha.servlet.ServletContext;
