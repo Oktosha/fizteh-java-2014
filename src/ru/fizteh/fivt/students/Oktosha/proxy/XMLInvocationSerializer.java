@@ -21,43 +21,52 @@ import java.util.IdentityHashMap;
 public class XMLInvocationSerializer implements InvocationSerializer {
     @Override
     public String serialize(Method method, Object[] args, Class<?> implClass, Object returnValue, Throwable thrown) {
-        XMLStreamWriter xmlWriter;
         try {
-            StringWriter stringWriter = new StringWriter();
-            XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-            xmlWriter = outputFactory.createXMLStreamWriter(stringWriter);
-
-            xmlWriter.writeStartElement("invoke");
-            xmlWriter.writeAttribute("timestamp", String.valueOf(System.currentTimeMillis()));
-            xmlWriter.writeAttribute("class", implClass.getName());
-            xmlWriter.writeAttribute("name", method.getName());
-
-            if (args.length == 0) {
-                xmlWriter.writeEmptyElement("arguments");
-            } else {
-                xmlWriter.writeStartElement("arguments");
-                for (Object arg : args) {
-                    xmlWriter.writeStartElement("argument");
-                    writeObject(arg, xmlWriter, new IdentityHashMap<>());
-                    xmlWriter.writeEndElement(); /* argument */
-                }
-                xmlWriter.writeEndElement(); /* arguments */
-            }
-            if (!(returnValue instanceof Void)) {
-                xmlWriter.writeStartElement("return");
-                writeObject(returnValue, xmlWriter, new IdentityHashMap<>());
-                xmlWriter.writeEndElement(); /* return */
-            }
-            xmlWriter.writeEndElement(); /* invoke */
-            xmlWriter.flush();
-            xmlWriter.close();
-            return stringWriter.toString();
-        } catch (XMLStreamException e) {
-            throw new RuntimeException(e);
+            return addIndentation(serializeWithoutIndentation(method, args, implClass, returnValue, thrown));
+        } catch (TransformerException | XMLStreamException e) {
+            throw new IllegalStateException("failed to serialize into XML", e);
         }
     }
 
-    public String addTabs(String xmlString) throws TransformerException {
+    String serializeWithoutIndentation(Method method, Object[] args, Class<?> implClass,
+                                       Object returnValue, Throwable thrown) throws XMLStreamException {
+        XMLStreamWriter xmlWriter;
+        StringWriter stringWriter = new StringWriter();
+        XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
+        xmlWriter = outputFactory.createXMLStreamWriter(stringWriter);
+
+        xmlWriter.writeStartElement("invoke");
+        xmlWriter.writeAttribute("timestamp", String.valueOf(System.currentTimeMillis()));
+        xmlWriter.writeAttribute("class", implClass.getName());
+        xmlWriter.writeAttribute("name", method.getName());
+
+        if (args.length == 0) {
+            xmlWriter.writeEmptyElement("arguments");
+        } else {
+            xmlWriter.writeStartElement("arguments");
+            for (Object arg : args) {
+                xmlWriter.writeStartElement("argument");
+                writeObject(arg, xmlWriter, new IdentityHashMap<>());
+                xmlWriter.writeEndElement(); /* argument */
+            }
+            xmlWriter.writeEndElement(); /* arguments */
+        }
+        if (thrown != null) {
+            xmlWriter.writeStartElement("thrown");
+            xmlWriter.writeCharacters(thrown.toString());
+            xmlWriter.writeEndElement(); /* thrown */
+        } else if (method.getReturnType() != void.class) {
+            xmlWriter.writeStartElement("return");
+            writeObject(returnValue, xmlWriter, new IdentityHashMap<>());
+            xmlWriter.writeEndElement(); /* return */
+        }
+        xmlWriter.writeEndElement(); /* invoke */
+        xmlWriter.flush();
+        xmlWriter.close();
+        return stringWriter.toString();
+    }
+
+    String addIndentation(String xmlString) throws TransformerException {
         TransformerFactory factory = TransformerFactory.newInstance();
 
         Transformer transformer = factory.newTransformer();

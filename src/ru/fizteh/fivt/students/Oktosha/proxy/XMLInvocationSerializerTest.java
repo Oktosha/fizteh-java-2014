@@ -1,6 +1,5 @@
 package ru.fizteh.fivt.students.Oktosha.proxy;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -55,8 +54,8 @@ public class XMLInvocationSerializerTest {
     }
 
     @Test
-    public void testAddTabs() throws Exception {
-        assertEquals(tabulatedList, serializer.addTabs(serializedList));
+    public void testAddIndentation() throws Exception {
+        assertEquals(tabulatedList, serializer.addIndentation(serializedList));
     }
 }
 
