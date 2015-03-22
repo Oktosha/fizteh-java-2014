@@ -20,23 +20,24 @@ import java.util.IdentityHashMap;
  */
 public class XMLInvocationSerializer implements InvocationSerializer {
     @Override
-    public String serialize(Method method, Object[] args, Class<?> implClass, Object returnValue, Throwable thrown) {
+    public String serialize(Method method, Object[] args, Class<?> implClass,
+                            Object returnValue, Throwable thrown, int timestamp) {
         try {
-            return addIndentation(serializeWithoutIndentation(method, args, implClass, returnValue, thrown));
+            return addIndentation(serializeWithoutIndentation(method, args, implClass, returnValue, thrown, timestamp));
         } catch (TransformerException | XMLStreamException e) {
             throw new IllegalStateException("failed to serialize into XML", e);
         }
     }
 
     String serializeWithoutIndentation(Method method, Object[] args, Class<?> implClass,
-                                       Object returnValue, Throwable thrown) throws XMLStreamException {
+                                       Object returnValue, Throwable thrown, int timestamp) throws XMLStreamException {
         XMLStreamWriter xmlWriter;
         StringWriter stringWriter = new StringWriter();
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
         xmlWriter = outputFactory.createXMLStreamWriter(stringWriter);
 
         xmlWriter.writeStartElement("invoke");
-        xmlWriter.writeAttribute("timestamp", String.valueOf(System.currentTimeMillis()));
+        xmlWriter.writeAttribute("timestamp", String.valueOf(timestamp));
         xmlWriter.writeAttribute("class", implClass.getName());
         xmlWriter.writeAttribute("name", method.getName());
 

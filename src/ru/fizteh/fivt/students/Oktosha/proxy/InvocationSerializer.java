@@ -7,5 +7,6 @@ import java.lang.reflect.Method;
  * interface for serializing method invocation
  */
 public interface InvocationSerializer {
-    String serialize(Method method, Object[] args, Class<?> implClass, Object returnValue, Throwable thrown);
+    String serialize(Method method, Object[] args, Class<?> implClass,
+                     Object returnValue, Throwable thrown, int timestamp);
 }
