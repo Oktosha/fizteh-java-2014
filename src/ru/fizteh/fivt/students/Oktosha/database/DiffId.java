@@ -27,4 +27,9 @@ public final class DiffId {
     public void increase() {
         ++id;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%0.5d", id);
+    }
 }
