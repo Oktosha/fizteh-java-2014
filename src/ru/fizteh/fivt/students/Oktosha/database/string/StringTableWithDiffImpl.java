@@ -14,125 +14,80 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class StringTableWithDiffImpl implements StringTableWithDiff {
 
     private MultiFileMap multiFileMap;
+    private final ThreadLocal<Map<String, String>> diff = new ThreadLocal<>();
+    private ReadWriteLock backEndRWL; /* protects reading/writing to files */
 
-    public Map<String, String> getDiff() {
+    private Map<String, String> getDiff() {
         return diff.get();
     }
-
-    private final ThreadLocal<Map<String, String>> diff = new ThreadLocal<>();
-    private boolean tableIsDropped;
-    private ReadWriteLock rwl;
 
     public StringTableWithDiffImpl(MultiFileMap multiFileMap) {
         this.multiFileMap = multiFileMap;
         this.diff.set(new HashMap<>());
-        this.tableIsDropped = false;
-        this.rwl = new ReentrantReadWriteLock(true);
+        this.backEndRWL = new ReentrantReadWriteLock(true);
     }
 
     @Override
     public int getNumberOfUncommittedChanges() {
-        rwl.readLock().lock();
-        int ret;
-
-        try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
-            ret = getDiff().size();
-        } finally {
-            rwl.readLock().unlock();
-        }
-
-        return ret;
+        return getDiff().size();
     }
 
     @Override
     public String getName() {
-        rwl.readLock().lock();
-        String ret;
-
-        try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
-            ret = multiFileMap.getName();
-        } finally {
-            rwl.readLock().unlock();
-        }
-
-        return ret;
+        return multiFileMap.getName();
     }
 
     @Override
     public String get(String key) {
-        rwl.readLock().lock();
-        String ret;
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
+            backEndRWL.readLock().lock();
             if (key == null) {
                 throw new IllegalArgumentException();
             }
             if (getDiff().containsKey(key)) {
-                ret = getDiff().get(key);
-            } else {
-                ret = multiFileMap.get(key);
+                return getDiff().get(key);
             }
+            return multiFileMap.get(key);
         } finally {
-            rwl.readLock().unlock();
+            backEndRWL.readLock().unlock();
         }
-        return ret;
     }
 
     @Override
     public String put(String key, String value) {
-        rwl.readLock().lock();
-        String ret;
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
+            backEndRWL.readLock().lock();
             if (key == null || value == null) {
                 throw new IllegalArgumentException();
             }
-            ret = get(key);
+            String ret = get(key);
             getDiff().put(key, value);
+            return ret;
         } finally {
-            rwl.readLock().unlock();
+            backEndRWL.readLock().unlock();
         }
-        return ret;
     }
 
     @Override
     public String remove(String key) {
-        rwl.readLock().lock();
-        String ret;
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
+            backEndRWL.readLock().lock();
             if (key == null) {
                 throw new IllegalArgumentException();
             }
-            ret = get(key);
+            String ret = get(key);
             getDiff().put(key, null);
+            return ret;
         } finally {
-            rwl.readLock().unlock();
+            backEndRWL.readLock().unlock();
         }
-        return ret;
     }
 
     @Override
     public int size() {
-        rwl.readLock().lock();
-        int ret;
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
-            ret = multiFileMap.size();
+            backEndRWL.readLock().lock();
+            int ret = multiFileMap.size();
             for (Map.Entry<String, String> entry : getDiff().entrySet()) {
                 if (entry.getValue() == null && multiFileMap.get(entry.getKey()) != null) {
                     --ret;
@@ -141,21 +96,17 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                     ++ret;
                 }
             }
+            return ret;
         } finally {
-            rwl.readLock().unlock();
+            backEndRWL.readLock().unlock();
         }
-        return ret;
     }
 
     @Override
     public int commit() throws IOException {
-        rwl.writeLock().lock();
-        int ret;
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
-            ret = getNumberOfUncommittedChanges();
+            backEndRWL.writeLock().lock();
+            int ret = getNumberOfUncommittedChanges();
             for (Map.Entry<String, String> entry : getDiff().entrySet()) {
                 if (entry.getValue() == null) {
                     multiFileMap.remove(entry.getKey());
@@ -165,36 +116,23 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
             }
             multiFileMap.save();
             getDiff().clear();
+            return ret;
         } finally {
-            rwl.writeLock().unlock();
+            backEndRWL.writeLock().unlock();
         }
-        return ret;
     }
 
     @Override
     public int rollback() {
-        rwl.readLock().lock();
-        int ret;
-        try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
-            ret = getNumberOfUncommittedChanges();
-            getDiff().clear();
-        } finally {
-            rwl.readLock().unlock();
-        }
+        int ret = getNumberOfUncommittedChanges();
+        getDiff().clear();
         return ret;
     }
 
     @Override
     public List<String> list() {
-        rwl.readLock().lock();
-        ArrayList<String> ret;
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
+            backEndRWL.readLock().lock();
             Set<String> keySet = new HashSet<>(multiFileMap.list());
             for (Map.Entry<String, String> entry : getDiff().entrySet()) {
                 if (entry.getValue() == null) {
@@ -203,25 +141,20 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                     keySet.add(entry.getKey());
                 }
             }
-            ret = new ArrayList<>(keySet);
+            return new ArrayList<>(keySet);
         } finally {
-            rwl.readLock().unlock();
+            backEndRWL.readLock().unlock();
         }
-        return ret;
     }
 
     @Override
     public void clear() throws IOException {
-        rwl.writeLock().lock();
         try {
-            if (tableIsDropped) {
-                throw new IllegalStateException();
-            }
+            backEndRWL.writeLock().lock();
             multiFileMap.clear();
             multiFileMap.save();
-            tableIsDropped = true;
         } finally {
-            rwl.writeLock().unlock();
+            backEndRWL.writeLock().unlock();
         }
     }
 }
