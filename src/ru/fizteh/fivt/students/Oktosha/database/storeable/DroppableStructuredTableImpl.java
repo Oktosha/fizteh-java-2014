@@ -2,6 +2,7 @@ package ru.fizteh.fivt.students.Oktosha.database.storeable;
 
 import ru.fizteh.fivt.storage.structured.ColumnFormatException;
 import ru.fizteh.fivt.storage.structured.Storeable;
+import ru.fizteh.fivt.students.Oktosha.database.Diff;
 import ru.fizteh.fivt.students.Oktosha.database.filebackend.MultiFileMapImpl;
 import ru.fizteh.fivt.students.Oktosha.database.string.StringTableWithDiff;
 import ru.fizteh.fivt.students.Oktosha.database.string.StringTableWithDiffImpl;
@@ -287,6 +288,19 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
             tableIsDropped = true;
         } finally {
             beingDroppedRWL.writeLock().unlock();
+        }
+    }
+
+    @Override
+    public void setDiff(Diff diff) {
+        try {
+            beingDroppedRWL.readLock().lock();
+            if (tableIsDropped) {
+                throw new IllegalStateException();
+            }
+            backEndTable.setDiff(diff);
+        } finally {
+            beingDroppedRWL.readLock().unlock();
         }
     }
 }

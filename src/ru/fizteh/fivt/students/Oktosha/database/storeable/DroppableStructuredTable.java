@@ -1,6 +1,7 @@
 package ru.fizteh.fivt.students.Oktosha.database.storeable;
 
 import ru.fizteh.fivt.storage.structured.Table;
+import ru.fizteh.fivt.students.Oktosha.database.Diff;
 
 import java.io.IOException;
 
@@ -9,4 +10,6 @@ import java.io.IOException;
  */
 public interface DroppableStructuredTable extends Table {
     void drop() throws IOException;
+
+    void setDiff(Diff diff);
 }
