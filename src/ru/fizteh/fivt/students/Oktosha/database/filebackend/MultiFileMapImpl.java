@@ -15,7 +15,7 @@ import java.util.List;
 public class MultiFileMapImpl implements MultiFileMap {
 
     private final FileMap[][] fileMaps;
-    private Path path;
+    private final Path path;
 
     public MultiFileMapImpl(Path path) throws IOException {
         this.path = path;

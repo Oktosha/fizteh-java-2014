@@ -3,7 +3,6 @@ package ru.fizteh.fivt.students.Oktosha.servlet;
 import ru.fizteh.fivt.students.Oktosha.commander.*;
 import ru.fizteh.fivt.students.Oktosha.database.tableprovider.ExtendedTableProvider;
 import ru.fizteh.fivt.students.Oktosha.database.tableprovider.LoggingTableProviderFactory;
-import ru.fizteh.fivt.students.Oktosha.database.tableprovider.SimpleTableProviderFactory;
 import ru.fizteh.fivt.students.Oktosha.parallel_main.commands.*;
 import ru.fizteh.fivt.students.Oktosha.servlet.commands.StartHttpCommand;
 import ru.fizteh.fivt.students.Oktosha.servlet.commands.StopHttpCommand;
