@@ -15,10 +15,8 @@ import java.io.IOException;
  */
 public class BeginServlet extends AbstractServlet {
 
-    ServletContext context;
-
     public BeginServlet(ServletContext context) {
-        this.context = context;
+        super(context);
     }
 
     @Override
@@ -27,13 +25,13 @@ public class BeginServlet extends AbstractServlet {
         if (tableName == null) {
             return;
         }
-        DroppableStructuredTable table = context.getTableProvider().getTable(tableName);
+        DroppableStructuredTable table = getContext().getTableProvider().getTable(tableName);
         if (table == null) {
             resp.sendError(400, tableName + " not exists");
             return;
         }
         try {
-            DiffId diffId = context.getDiffManager().createDiff(table);
+            DiffId diffId = getContext().getDiffManager().createDiff(table);
             resp.getWriter().write(diffId.toString());
             resp.setStatus(200);
         } catch (PoolIsFullException e) {

@@ -8,35 +8,34 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.text.ParseException;
 
 /**
  * Created by DKolodzey on 22.03.15.
  */
-public class GetServlet extends AbstractServlet {
-
-    public GetServlet(ServletContext context) {
+public class PutServlet extends AbstractServlet {
+    public PutServlet(ServletContext context) {
         super(context);
     }
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         DroppableStructuredTable switchedTable = switchToTransaction(req, resp);
-        if (switchedTable == null) {
+        String key = getParameter("key", req, resp);
+        if (key == null) {
+            return;
+        }
+        String value = getParameter("value", req, resp);
+        if (value == null) {
             return;
         }
         try {
-            String key = getParameter("key", req, resp);
-            if (key == null) {
-                return;
-            }
-            Storeable value = switchedTable.get(key);
-            if (value == null) {
-                resp.sendError(404, "not found");
-                return;
-            }
-            resp.getWriter().write(getContext().getTableProvider().serialize(switchedTable, value));
+            Storeable oldValue = switchedTable.put(key,
+                    getContext().getTableProvider().deserialize(switchedTable, value));
+            resp.getWriter().write(getContext().getTableProvider().serialize(switchedTable, oldValue));
             resp.setStatus(200);
-        } catch (Throwable e) {
-            resp.sendError(500, e.getMessage());
+        } catch (ParseException e) {
+            resp.sendError(400, "invalid value");
         }
     }
 }
