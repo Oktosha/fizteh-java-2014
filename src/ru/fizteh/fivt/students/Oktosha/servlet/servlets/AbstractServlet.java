@@ -27,7 +27,8 @@ public class AbstractServlet extends HttpServlet {
         return parameter;
     }
 
-    protected DroppableStructuredTable switchToTransaction(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected DroppableStructuredTable switchToTransaction(HttpServletRequest req,
+                                                           HttpServletResponse resp) throws IOException {
         DiffId tid;
         try {
             tid = new DiffId(req.getParameter("tid"));
