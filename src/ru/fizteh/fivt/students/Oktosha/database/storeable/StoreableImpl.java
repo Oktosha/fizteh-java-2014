@@ -98,4 +98,21 @@ public class StoreableImpl implements Storeable {
     public int hashCode() {
         return this.signature.hashCode() + Arrays.hashCode(this.columns);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(this.getClass().getSimpleName());
+        builder.append("[");
+        for (int i = 0; i  < columns.length; ++i) {
+            if (columns[i] != null) {
+                builder.append(columns[i].toString());
+            }
+            if (i != columns.length - 1) {
+                builder.append(",");
+            }
+        }
+        builder.append("]");
+        return builder.toString();
+    }
 }
