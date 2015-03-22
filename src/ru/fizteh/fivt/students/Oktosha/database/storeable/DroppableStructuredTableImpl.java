@@ -28,7 +28,7 @@ public class DroppableStructuredTableImpl implements DroppableStructuredTable {
     List<SignatureElement> signature;
     StoreableSerializerDeserializer codec;
     private boolean tableIsDropped = false;
-    private ReadWriteLock beingDroppedRWL = new ReentrantReadWriteLock(true);
+    private final ReadWriteLock beingDroppedRWL = new ReentrantReadWriteLock(true);
 
 
     public DroppableStructuredTableImpl(Path path, StoreableSerializerDeserializer codec) throws IOException {

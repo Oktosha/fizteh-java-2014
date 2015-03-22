@@ -10,12 +10,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * Created by DKolodzey on 22.03.15.
  */
 public class DiffManagerImpl implements DiffManager {
-    final ReadWriteLock rwl;  /* protects diff pool */
-    final Map<DiffId, Map<String, String>> idToMap;
-    final Map<DiffId, DroppableStructuredTable> idToTable;
-    final IdentityHashMap<DroppableStructuredTable, Set<DiffId>>  tableToId;
-    final Set<DiffId> releasedIds;
-    final DiffId maxId;
+    private final ReadWriteLock rwl;  /* protects diff pool */
+    private final Map<DiffId, Map<String, String>> idToMap;
+    private final Map<DiffId, DroppableStructuredTable> idToTable;
+    private final IdentityHashMap<DroppableStructuredTable, Set<DiffId>>  tableToId;
+    private final Set<DiffId> releasedIds;
+    private final DiffId maxId;
 
     public DiffManagerImpl() {
         this.rwl = new ReentrantReadWriteLock(true);

@@ -15,7 +15,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
 
     private MultiFileMap multiFileMap;
     private final ThreadLocal<Map<String, String>> diff = new ThreadLocal<>();
-    private ReadWriteLock backEndRWL; /* protects reading/writing to files */
+    private final ReadWriteLock backEndRWL; /* protects reading/writing to files */
 
     private Map<String, String> getDiff() {
         return diff.get();
