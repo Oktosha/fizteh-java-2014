@@ -21,7 +21,7 @@ import java.util.IdentityHashMap;
 public class XMLInvocationSerializer implements InvocationSerializer {
     @Override
     public String serialize(Method method, Object[] args, Class<?> implClass,
-                            Object returnValue, Throwable thrown, int timestamp) {
+                            Object returnValue, Throwable thrown, long timestamp) {
         try {
             return addIndentation(serializeWithoutIndentation(method, args, implClass, returnValue, thrown, timestamp));
         } catch (TransformerException | XMLStreamException e) {
@@ -30,7 +30,7 @@ public class XMLInvocationSerializer implements InvocationSerializer {
     }
 
     String serializeWithoutIndentation(Method method, Object[] args, Class<?> implClass,
-                                       Object returnValue, Throwable thrown, int timestamp) throws XMLStreamException {
+                                       Object returnValue, Throwable thrown, long timestamp) throws XMLStreamException {
         XMLStreamWriter xmlWriter;
         StringWriter stringWriter = new StringWriter();
         XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
@@ -76,7 +76,7 @@ public class XMLInvocationSerializer implements InvocationSerializer {
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
         StringWriter formattedStringWriter = new StringWriter();
-        transformer.transform(new StreamSource(new StringReader(xmlString.toString())),
+        transformer.transform(new StreamSource(new StringReader(xmlString)),
                               new StreamResult(formattedStringWriter));
         return formattedStringWriter.toString();
     }

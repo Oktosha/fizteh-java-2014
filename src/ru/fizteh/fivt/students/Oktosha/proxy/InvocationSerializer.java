@@ -8,5 +8,5 @@ import java.lang.reflect.Method;
  */
 public interface InvocationSerializer {
     String serialize(Method method, Object[] args, Class<?> implClass,
-                     Object returnValue, Throwable thrown, int timestamp);
+                     Object returnValue, Throwable thrown, long timestamp);
 }
