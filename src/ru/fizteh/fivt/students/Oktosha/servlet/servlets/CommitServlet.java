@@ -12,7 +12,7 @@ import java.io.IOException;
  * Created by DKolodzey on 23.03.15.
  */
 public class CommitServlet extends AbstractServlet {
-    protected CommitServlet(ServletContext context) {
+    public CommitServlet(ServletContext context) {
         super(context);
     }
 

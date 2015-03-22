@@ -12,7 +12,7 @@ import java.io.IOException;
  * Created by DKolodzey on 23.03.15.
  */
 public class RollbackServlet extends AbstractServlet {
-    protected RollbackServlet(ServletContext context) {
+    public RollbackServlet(ServletContext context) {
         super(context);
     }
     @Override

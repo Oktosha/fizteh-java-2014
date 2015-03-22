@@ -12,7 +12,7 @@ import java.io.IOException;
  * Created by DKolodzey on 23.03.15.
  */
 public class SizeServlet extends AbstractServlet {
-    protected SizeServlet(ServletContext context) {
+    public SizeServlet(ServletContext context) {
         super(context);
     }
 
