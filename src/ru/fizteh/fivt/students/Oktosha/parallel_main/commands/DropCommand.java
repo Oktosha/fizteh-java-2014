@@ -13,7 +13,7 @@ import java.util.List;
 public class DropCommand extends AbstractCommand {
     @Override
     public String getName() {
-        return "drop";
+        return "clear";
     }
 
     @Override
@@ -29,7 +29,7 @@ public class DropCommand extends AbstractCommand {
             context.getTableProvider().removeTable(arguments.get(1));
         } catch (IOException e) {
             throw new CommandExecutionException(getName()
-                                                + "error: failed to drop table "
+                                                + "error: failed to clear table "
                                                 + arguments.get(1) + ":" + e.getMessage(), e);
         }
         println(context, "dropped");

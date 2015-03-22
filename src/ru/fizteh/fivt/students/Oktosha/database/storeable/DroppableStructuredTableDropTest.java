@@ -1,86 +1,97 @@
-package ru.fizteh.fivt.students.Oktosha.database.string;
+package ru.fizteh.fivt.students.Oktosha.database.storeable;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import ru.fizteh.fivt.students.Oktosha.database.filebackend.MultiFileMap;
-import ru.fizteh.fivt.students.Oktosha.database.filebackend.MultiFileMapImpl;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by DKolodzey on 04.03.15.
- * Test that drop switches to invalid state
+ * Test that clear switches to invalid state
  */
-public class StringTableWithDiffDropTest {
+public class DroppableStructuredTableDropTest {
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
 
-    StringTableWithDiff stringTableWithDiff;
-    MultiFileMap multiFileMap;
     Path path;
+    JSONStoreableSerializerDeserializer codec;
+    List<SignatureElement> signature;
+    DroppableStructuredTable table;
+
 
     @Before
     public void setUp() throws Exception {
-        File rootFolder = folder.newFolder("Oktosha.fileMap");
+        File rootFolder = folder.newFolder();
         path = rootFolder.toPath();
-        multiFileMap = new MultiFileMapImpl(path);
-        stringTableWithDiff = new StringTableWithDiffImpl(multiFileMap);
-        stringTableWithDiff.put("key", "value");
-        stringTableWithDiff.put("ключ", "значение");
-        stringTableWithDiff.drop();
+        path = path.resolve("tableName");
+
+        codec = new JSONStoreableSerializerDeserializer();
+
+        signature = new ArrayList<>();
+        signature.add(SignatureElement.BOOLEAN);
+        signature.add(SignatureElement.STRING);
+        signature.add(SignatureElement.INTEGER);
+        signature.add(SignatureElement.DOUBLE);
+        signature.add(SignatureElement.STRING);
+
+        table = new DroppableStructuredTableImpl(path, codec, signature);
+        table.put("key", new StoreableImpl(signature));
+        table.drop();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testCommit() throws Exception {
-        stringTableWithDiff.commit();
+        table.commit();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testDrop() throws Exception {
-        stringTableWithDiff.drop();
+        table.drop();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGet() throws Exception {
-        stringTableWithDiff.get("key");
+        table.get("key");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGetName() throws Exception {
-        stringTableWithDiff.getName();
+        table.getName();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testGetNumberOfUncommittedChanges() throws Exception {
-        stringTableWithDiff.getNumberOfUncommittedChanges();
+        table.getNumberOfUncommittedChanges();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testList() throws Exception {
-        stringTableWithDiff.list();
+        table.list();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testPut() throws Exception {
-        stringTableWithDiff.put("key", "value");
+        table.put("key", new StoreableImpl(signature));
     }
 
     @Test(expected = IllegalStateException.class)
     public void testRemove() throws Exception {
-        stringTableWithDiff.remove("key");
+        table.remove("key");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testRollback() throws Exception {
-        stringTableWithDiff.rollback();
+        table.rollback();
     }
 
     @Test(expected = IllegalStateException.class)
     public void testSize() throws Exception {
-        stringTableWithDiff.size();
+        table.size();
     }
 }

@@ -92,7 +92,7 @@ public class StringTableWithDiffTest {
         stringTableWithDiff = new StringTableWithDiffImpl(multiFileMap);
         assertEquals(0, stringTableWithDiff.getNumberOfUncommittedChanges());
 
-        stringTableWithDiff.drop();
+        stringTableWithDiff.clear();
 
         stringTableWithDiff = new StringTableWithDiffImpl(multiFileMap);
         assertEquals(0, stringTableWithDiff.getNumberOfUncommittedChanges());
@@ -182,7 +182,7 @@ public class StringTableWithDiffTest {
         assertNull(stringTableWithDiff.get("E"));
         assertNull(stringTableWithDiff.get("F"));
 
-        stringTableWithDiff.drop();
+        stringTableWithDiff.clear();
 
         stringTableWithDiff = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
         assertNull(stringTableWithDiff.get("A"));
@@ -320,7 +320,7 @@ public class StringTableWithDiffTest {
         stringTableWithDiff = new StringTableWithDiffImpl(multiFileMap);
         assertEquals(2, stringTableWithDiff.size());
 
-        stringTableWithDiff.drop();
+        stringTableWithDiff.clear();
 
         stringTableWithDiff = new StringTableWithDiffImpl(multiFileMap);
         assertEquals(0, stringTableWithDiff.size());
@@ -444,7 +444,7 @@ public class StringTableWithDiffTest {
         assertEquals(new HashSet<>(Arrays.asList("A", "Ц")),
                 new HashSet<>(stringTableWithDiff.list()));
 
-        stringTableWithDiff.drop();
+        stringTableWithDiff.clear();
 
         stringTableWithDiff = new StringTableWithDiffImpl(new MultiFileMapImpl(path));
         assertTrue(stringTableWithDiff.list().isEmpty());

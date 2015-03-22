@@ -211,7 +211,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
     }
 
     @Override
-    public void drop() throws IOException {
+    public void clear() throws IOException {
         rwl.writeLock().lock();
         try {
             if (tableIsDropped) {
