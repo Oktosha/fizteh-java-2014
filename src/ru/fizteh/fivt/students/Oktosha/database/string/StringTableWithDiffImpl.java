@@ -1,4 +1,6 @@
-package ru.fizteh.fivt.students.Oktosha.database;
+package ru.fizteh.fivt.students.Oktosha.database.string;
+
+import ru.fizteh.fivt.students.Oktosha.database.filebackend.MultiFileMap;
 
 import java.io.IOException;
 import java.util.*;

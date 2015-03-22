@@ -5,7 +5,7 @@ import ru.fizteh.fivt.students.Oktosha.commander.AbstractCommand;
 import ru.fizteh.fivt.students.Oktosha.commander.Command;
 import ru.fizteh.fivt.students.Oktosha.commander.CommandExecutionException;
 import ru.fizteh.fivt.students.Oktosha.commander.Context;
-import ru.fizteh.fivt.students.Oktosha.database.SignatureElement;
+import ru.fizteh.fivt.students.Oktosha.database.storeable.SignatureElement;
 
 import java.io.IOException;
 import java.util.ArrayList;

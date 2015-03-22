@@ -1,4 +1,4 @@
-package ru.fizteh.fivt.students.Oktosha.database;
+package ru.fizteh.fivt.students.Oktosha.database.storeable;
 
 import org.junit.Before;
 import org.junit.Test;

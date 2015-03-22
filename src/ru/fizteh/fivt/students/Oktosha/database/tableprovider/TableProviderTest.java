@@ -1,4 +1,4 @@
-package ru.fizteh.fivt.students.Oktosha.database;
+package ru.fizteh.fivt.students.Oktosha.database.tableprovider;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -7,6 +7,9 @@ import org.junit.rules.TemporaryFolder;
 import ru.fizteh.fivt.storage.structured.Storeable;
 import ru.fizteh.fivt.storage.structured.Table;
 import ru.fizteh.fivt.storage.structured.TableProvider;
+import ru.fizteh.fivt.students.Oktosha.database.storeable.SignatureElement;
+import ru.fizteh.fivt.students.Oktosha.database.storeable.SimpleDroppableStructuredTableFactory;
+import ru.fizteh.fivt.students.Oktosha.database.storeable.StoreableImpl;
 
 import java.io.File;
 import java.nio.file.Path;

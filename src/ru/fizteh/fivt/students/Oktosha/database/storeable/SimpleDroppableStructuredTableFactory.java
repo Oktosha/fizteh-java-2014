@@ -1,4 +1,4 @@
-package ru.fizteh.fivt.students.Oktosha.database;
+package ru.fizteh.fivt.students.Oktosha.database.storeable;
 
 import java.io.IOException;
 import java.nio.file.Path;

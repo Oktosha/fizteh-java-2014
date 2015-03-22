@@ -1,7 +1,10 @@
-package ru.fizteh.fivt.students.Oktosha.database;
+package ru.fizteh.fivt.students.Oktosha.database.storeable;
 
 import ru.fizteh.fivt.storage.structured.ColumnFormatException;
 import ru.fizteh.fivt.storage.structured.Storeable;
+import ru.fizteh.fivt.students.Oktosha.database.filebackend.MultiFileMapImpl;
+import ru.fizteh.fivt.students.Oktosha.database.string.StringTableWithDiff;
+import ru.fizteh.fivt.students.Oktosha.database.string.StringTableWithDiffImpl;
 
 import java.io.*;
 import java.nio.file.Files;

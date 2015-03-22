@@ -1,4 +1,4 @@
-package ru.fizteh.fivt.students.Oktosha.database;
+package ru.fizteh.fivt.students.Oktosha.database.storeable;
 
 /**
  * Created by DKolodzey on 06.03.15.

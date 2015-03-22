@@ -1,4 +1,4 @@
-package ru.fizteh.fivt.students.Oktosha.database;
+package ru.fizteh.fivt.students.Oktosha.database.filebackend;
 
 import org.junit.Before;
 import org.junit.Rule;
