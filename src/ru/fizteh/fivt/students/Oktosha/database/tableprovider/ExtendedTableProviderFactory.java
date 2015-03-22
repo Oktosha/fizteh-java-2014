@@ -7,6 +7,6 @@ import java.io.IOException;
 /**
  * Created by DKolodzey on 22.03.15.
  */
-public interface ExtendedTableProviderFactory extends TableProviderFactory {
+public interface ExtendedTableProviderFactory extends TableProviderFactory, AutoCloseable {
     ExtendedTableProvider create(String path) throws IOException;
 }
