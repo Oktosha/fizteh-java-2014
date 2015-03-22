@@ -1,5 +1,6 @@
 package ru.fizteh.fivt.students.Oktosha.servlet.servlets;
 
+import ru.fizteh.fivt.students.Oktosha.database.DiffId;
 import ru.fizteh.fivt.students.Oktosha.database.storeable.DroppableStructuredTable;
 import ru.fizteh.fivt.students.Oktosha.servlet.ServletContext;
 
@@ -25,6 +26,7 @@ public class CommitServlet extends AbstractServlet {
         try {
             resp.getWriter().write(String.valueOf(switchedTable.commit()));
             resp.setStatus(200);
+            getContext().getDiffManager().freeDiff(switchedTable, new DiffId(req.getParameter("tid")));
         } catch (Throwable e) {
             resp.sendError(500, e.getMessage());
         }
