@@ -41,7 +41,7 @@ public class XMLInvocationSerializer implements InvocationSerializer {
         xmlWriter.writeAttribute("class", implClass.getName());
         xmlWriter.writeAttribute("name", method.getName());
 
-        if (args.length == 0) {
+        if (args == null) {
             xmlWriter.writeEmptyElement("arguments");
         } else {
             xmlWriter.writeStartElement("arguments");

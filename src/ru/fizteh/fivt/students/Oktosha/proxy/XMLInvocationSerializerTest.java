@@ -82,10 +82,12 @@ public class XMLInvocationSerializerTest {
     public void testSerializeWithoutIndentation() throws Exception {
         assertEquals(voidMethodInvoke,
                 serializer.serializeWithoutIndentation(SomeClass.class.getMethod("incX"),
-                        new Object[]{}, SomeClass.class, null, null, 12345));
-        System.out.println(serializer.serializeWithoutIndentation(SomeClass.class.getMethod("sumWithX", int.class),
+                        null, SomeClass.class, null, null, 12345));
+        assertEquals(intMethodInvoke,
+                serializer.serializeWithoutIndentation(SomeClass.class.getMethod("sumWithX", int.class),
                 new Object[]{1}, SomeClass.class, 4, null, 12345));
-        System.out.println(serializer.serializeWithoutIndentation(SomeClass.class.getMethod("sumWithX", int.class),
+        assertEquals(exceptionMethodInvoke,
+                serializer.serializeWithoutIndentation(SomeClass.class.getMethod("sumWithX", int.class),
                 new Object[]{1}, SomeClass.class, null, new IOException("azaza exception"), 12345));
     }
 
