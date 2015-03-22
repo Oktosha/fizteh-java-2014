@@ -14,6 +14,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class StringTableWithDiffImpl implements StringTableWithDiff {
 
     private MultiFileMap multiFileMap;
+
+    public Map<String, String> getDiff() {
+        return diff.get();
+    }
+
     private final ThreadLocal<Map<String, String>> diff = new ThreadLocal<>();
     private boolean tableIsDropped;
     private ReadWriteLock rwl;
@@ -34,7 +39,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
             if (tableIsDropped) {
                 throw new IllegalStateException();
             }
-            ret = diff.get().size();
+            ret = getDiff().size();
         } finally {
             rwl.readLock().unlock();
         }
@@ -70,8 +75,8 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
             if (key == null) {
                 throw new IllegalArgumentException();
             }
-            if (diff.get().containsKey(key)) {
-                ret = diff.get().get(key);
+            if (getDiff().containsKey(key)) {
+                ret = getDiff().get(key);
             } else {
                 ret = multiFileMap.get(key);
             }
@@ -93,7 +98,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                 throw new IllegalArgumentException();
             }
             ret = get(key);
-            diff.get().put(key, value);
+            getDiff().put(key, value);
         } finally {
             rwl.readLock().unlock();
         }
@@ -112,7 +117,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                 throw new IllegalArgumentException();
             }
             ret = get(key);
-            diff.get().put(key, null);
+            getDiff().put(key, null);
         } finally {
             rwl.readLock().unlock();
         }
@@ -128,7 +133,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                 throw new IllegalStateException();
             }
             ret = multiFileMap.size();
-            for (Map.Entry<String, String> entry : diff.get().entrySet()) {
+            for (Map.Entry<String, String> entry : getDiff().entrySet()) {
                 if (entry.getValue() == null && multiFileMap.get(entry.getKey()) != null) {
                     --ret;
                 }
@@ -151,7 +156,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                 throw new IllegalStateException();
             }
             ret = getNumberOfUncommittedChanges();
-            for (Map.Entry<String, String> entry : diff.get().entrySet()) {
+            for (Map.Entry<String, String> entry : getDiff().entrySet()) {
                 if (entry.getValue() == null) {
                     multiFileMap.remove(entry.getKey());
                 } else {
@@ -159,7 +164,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                 }
             }
             multiFileMap.save();
-            diff.get().clear();
+            getDiff().clear();
         } finally {
             rwl.writeLock().unlock();
         }
@@ -175,7 +180,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                 throw new IllegalStateException();
             }
             ret = getNumberOfUncommittedChanges();
-            diff.get().clear();
+            getDiff().clear();
         } finally {
             rwl.readLock().unlock();
         }
@@ -191,7 +196,7 @@ public class StringTableWithDiffImpl implements StringTableWithDiff {
                 throw new IllegalStateException();
             }
             Set<String> keySet = new HashSet<>(multiFileMap.list());
-            for (Map.Entry<String, String> entry : diff.get().entrySet()) {
+            for (Map.Entry<String, String> entry : getDiff().entrySet()) {
                 if (entry.getValue() == null) {
                     keySet.remove(entry.getKey());
                 } else {
