@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 
 /**
  * Created by DKolodzey on 22.03.15.
+ * handler which wraps object methods with logging
  */
 public class LoggingInvocationHandler implements InvocationHandler {
 
@@ -22,14 +23,8 @@ public class LoggingInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (method.equals(Object.class.getMethod("equals", Object.class))) {
-            return object.equals(args[0]);
-        }
-        if (method.equals(Object.class.getMethod("hashCode"))) {
-            return object.hashCode();
-        }
-        if (method.equals(Object.class.getMethod("toString"))) {
-            return object.toString();
+        if (method.getDeclaringClass() == Object.class) {
+            return method.invoke(object, args);
         }
         long timestamp = System.currentTimeMillis();
         Throwable thrown = null;
